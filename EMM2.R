@@ -136,26 +136,32 @@ cols8 <- brewer.pal(4, "Blues")
 #Figures of T, R0 and r
 rplot <- scatter2D(eig.new2$R0, eig.new2$time, colvar=eig.new2$r,
             type = "points", xlab = "R0", ylab="T", clab = "r", xlim = c(0,2),
-            ylim = c(3,9), pin = c(5,5), col = cols8)
+            ylim = c(3,9), pin = c(5,5))
 #Gordon liked T on x axis 
+par(mar=c(4,4,2,2))
 rplotb <- scatter2D(eig.new2$time, eig.new2$R0, colvar=eig.new2$r,
           xlab = "T", ylab ="R0", clab="r",
-          xlim = c(3.5,9), ylim = c(0,2), pin = c(5,5), col = cols)
+          xlim = c(3.5,9), ylim = c(0,2), pin = c(5,5))
 rplotc <- scatter2D(eig.new2$time, eig.new2$r, colvar = eig.new2$R0)
 rplotd <- scatter2D(eig.new2$R0, eig.new2$r, colvar = eig.new2$T,
-                    xlab = "R0", ylab="r", clab="T")
+            xlab = "R0", ylab="r", clab="T")
+#2d plot T and R0
+plot1 <- plot(eig.new2$time, eig.new2$R0, type = "p", pch = ".",
+              xlab = "T", ylab = "R0", main = "",ylim = c(0,2),
+             xlim = c(3.5,9), pin = c(5,5))
+#2d plot T and r
+plot2 <- plot(eig.new2$time, eig.new2$r, type = "p", pch = ".",
+              xlab = "T", ylab = "r", xlim = c(3.5,9), pin =c(5,5))
+#2d plot R0 and r
+plot3 <- plot(eig.new2$R0, eig.new2$r, type = "p", pch = ".", 
+              xlab = "R0", ylab = "r", xlim = c(0,2), pin = c(5,5))
 
-ggplot(pres.cand, aes(pres.cand$Name, y="Polling results", color = "Media Outlet")) + 
-  geom_point(aes(y = pres.cand$ABC_politicalpollresults , col = "ABC")) + 
-  geom_point(aes(y = pres.cand$NBC_politicalpollresults, col = "NBC")) + 
-  labs(x = "Candidate", y = "Polling Results")   +
-  theme(
-    axis.title=element_text(face="bold", size = "12", color="black"))
-p <- ggplot(eig.new2, aes(eig.new2$time), y="r") +
-  geom_point(aes(y = eig.new2$r))
 
-#rplotc <- scatterplot3d(eig.new2$time, eig.new2$R0, eig.new2$r, color = 
-    #par("col"), pch = 8)
+library(rgl)
+#interactive 3d plots, really cool but can't use this for publishing it seems
+nplot <- plot3d(eig.new2$time, eig.new2$R0, eig.new2$r, pch = 20,
+                xlim = c(3.5,9), ylim = c(0,2), pin = c(5,5), xlab = "T",
+              ylab = "R0", cols)
 
 
 #unnecessary 
