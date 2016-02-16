@@ -24,6 +24,8 @@ library(scatterplot3d)
 library(ggplot2)
 library(plot3D)
 
+
+
 #function for estimating Bienvenus's T
 Bien.T <- function(L, v, w, r){
   time <- L * drop(v%*%w)/(drop(v%*%r%*%w))
@@ -145,6 +147,8 @@ rplotb <- scatter2D(eig.new2$time, eig.new2$R0, colvar=eig.new2$r,
 rplotc <- scatter2D(eig.new2$time, eig.new2$r, colvar = eig.new2$R0)
 rplotd <- scatter2D(eig.new2$R0, eig.new2$r, colvar = eig.new2$T,
             xlab = "R0", ylab="r", clab="T")
+
+##Added Feb 15, 2016
 #2d plot T and R0
 plot1 <- plot(eig.new2$time, eig.new2$R0, type = "p", pch = ".",
               xlab = "T", ylab = "R0", main = "",ylim = c(0,2),
@@ -155,13 +159,58 @@ plot2 <- plot(eig.new2$time, eig.new2$r, type = "p", pch = ".",
 #2d plot R0 and r
 plot3 <- plot(eig.new2$R0, eig.new2$r, type = "p", pch = ".", 
               xlab = "R0", ylab = "r", xlim = c(0,2), pin = c(5,5))
+#2d plot open circle 
+#plot4 <- plot(eig.new2$time, eig.new2$R0, type = "p", pch = 8,
+              #xlab = "T", ylab = "R0", main = "",ylim = c(0,2),
+              #xlim = c(3.5,9), pin = c(5,5))
 
+### Feb 16, 2016
+par(mar = c(3,3,3,5))
+plot5<- scatterplot3d(eig.new2$time, eig.new2$R0, eig.new2$r, pch=".",
+      angle=45, scale.y = 0.8, xlab = "Time", ylab= "R0", zlab= "r", 
+      highlight.3d= FALSE, color = "dark green",
+      xlim = c(3.5,9), ylim = c(0,2), zlim = c(-0.3,0.2))
+
+plot6 <- scatterplot3d(eig.new2$time, eig.new2$r, eig.new2$R0, 
+        pch=".", angle = 45, scale.y = 1, color = "red",
+        xlab = "Generation Time", ylab = "r", zlab = "R0",
+        highlight.3d = FALSE, xlim=c(3.5,9), ylim = c(-0.3,0.2),
+        zlim = c(0,2), pin = c(10,10))
+
+plot7 <- scatterplot3d(eig.new2$time, eig.new2$r, eig.new2$R0, 
+        angle = 45, scale.y = 1, pch =".", xlab = "Generation Time", ylab = "r", 
+        zlab = "R0", highlight.3d = TRUE, xlim=c(3.5,9), ylim = c(-0.3,0.2),
+        zlim = c(0,2), pin = c(10,10))
+#mtext("r",side=4, line = -2)
+
+#different angle and color intensity related to y coordinates (r here)
+plot8 <- scatterplot3d(eig.new2$time, eig.new2$r, eig.new2$R0, 
+      angle = 60, scale.y = 1, pch =".", xlab = "Generation Time", ylab = "r", 
+      zlab = "R0", highlight.3d = TRUE, xlim=c(3.5,9), ylim = c(-0.3,0.2),
+      zlim = c(0,2), pin = c(10,10))
+
+#try ggplot2
+plot9 <- ggplot(eig.new2, aes(eig.new2$time, eig.new2$r))
+plot9 + geom_point(shape=46, color = 'darkblue') + xlim(3.5,9) + ylim(-0.3,0.2) + 
+  labs(x = "Generation Time", y = "r") 
+
+plot10 <- ggplot(eig.new2, aes(eig.new2$R0, eig.new2$r))
+plot10 + geom_point(shape=46, color = 'darkblue') + xlim(0,2) + ylim(-0.3,0.2) +
+  labs(x = "R0", y = "r")
+
+plot11 <- ggplot(eig.new2, aes(eig.new2$time, eig.new2$R0))
+plot11 + geom_point(shape=46, color = 'darkgreen') + xlim(3.5,9) + ylim(0,2) +
+  labs(x = "T", y = "R0")
+
+plot12 <- ggplot(eig.new2, aes(eig.new2$R0, eig.new2$time))
+plot12 + geom_point(shape=46, color = 'purple') + xlim(0,2) + ylim(3.5,9) +
+  labs(x = "R0", y = "T")
 
 library(rgl)
 #interactive 3d plots, really cool but can't use this for publishing it seems
 nplot <- plot3d(eig.new2$time, eig.new2$R0, eig.new2$r, pch = 20,
                 xlim = c(3.5,9), ylim = c(0,2), pin = c(5,5), xlab = "T",
-              ylab = "R0", cols)
+              ylab = "R0")
 
 
 #unnecessary 
