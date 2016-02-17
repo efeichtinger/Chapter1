@@ -58,6 +58,9 @@ gbr <- vector()
 gbar <- 0
 ii <- 0
 
+#increased sampling intensity for figures of T, R0 and r primarily 
+#gb <- 0.001 * (1:999)
+
 gb <- 0.01 * (1:99)
 S <- 0
 for (h in 8:8){
