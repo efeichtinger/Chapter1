@@ -119,11 +119,9 @@ eigen <- write.csv(eig.new, file = "eigen.csv")
 
 #Read in stored file with s = 0.3, 0.4, and 0. 5
 eig.2 <- read.csv("eigen2.csv", head=TRUE)
+#Stored file with s = 0.6, 0.7
 eig.3 <- read.csv("eigen.csv", head=TRUE)
-#For some reason time is a factor 
-eig.3 <- eig.3[,2:11]
-eig.3 <- eig.3[, !(colnames(eig.3) %in% c("r"))]
-eig.3$time <- as.numeric(eig.3$time)
+
 
 eig.all <- rbind(eig.2, eig.3)
 
@@ -219,5 +217,25 @@ p6 + facet_grid(gbar ~ phi) +
 theme(strip.text.x = element_text(size = 13)) +
   theme(strip.text.y = element_text(size = 13))
 
+
 #Figure 6 - mat plot, SSD (NOTE- might want to use just this and not Fig 5)
+#Monotypic populations (this can result from phi = 1, but don't present it this way
+## s = 0.5, g = 0.5, sigma = 0.05, P = 0.7
+## Slow
+sl <- c(0.275,1,0.225,0.7)
+slow <- matrix(sl, nrow=2, ncol =2, byrow =TRUE)
+fa <- c(0.225, 1, 0.275, 0.7)
+fast <- matrix(fa, nrow=2, ncol=2, byrow=TRUE)
+
+
+colnames(slow) <- c("slow juvenile", "slow adult")
+colnames(fast) <- c("fast juvenile", "fast adult")
+
+tf <- splitA(slow, r = 1, c=2)
+Tmat1 <- tf$T
+f1 <- fundamental.matrix(Tmat1)
+
+tf2 <- splitA(fast, r =1, c=2)
+Tmat2 <- tf2$T
+f2 <- fundamental.matrix(Tmat2)
 
