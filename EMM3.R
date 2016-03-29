@@ -119,11 +119,12 @@ eigen <- write.csv(eig.new, file = "eigen.csv")
 
 #Read in stored file with s = 0.3, 0.4, and 0. 5
 eig.2 <- read.csv("eigen2.csv", head=TRUE)
+#tmp <- read.csv("eigen2.csv", nrows = 150500)
 #Stored file with s = 0.6, 0.7
 eig.3 <- read.csv("eigen.csv", head=TRUE)
 
-
 eig.all <- rbind(eig.2, eig.3)
+names(eig.all)[names(eig.all)=='gbar'] <- 'gamma'
 
 ##Figures - labeled as intended for manuscript (Fig 1 is life cycle)
 
@@ -145,11 +146,11 @@ ggplot(datA, aes(x=sigma, y =lam)) +
         y = expression(lambda), color="Legend") 
 
 #Could do with multiple g's (and s?) for 4 different phi's in a panel 
-datC <- subset(eig.all, phi==1 & gbar == 0.1 & jsur == 0.5)
-datD <- subset(eig.all, phi==1 & gbar == 0.3 & jsur == 0.5)
-datE <- subset(eig.all, phi==1 & gbar == 0.5 & jsur == 0.5)
-datF <- subset(eig.all, phi==1 & gbar == 0.7 & jsur == 0.5)
-datG <- subset(eig.all, phi==1 & gbar == 0.9 & jsur == 0.5)
+datC <- subset(eig.all, phi==1 & gamma == 0.1 & jsur == 0.5)
+datD <- subset(eig.all, phi==1 & gamma == 0.3 & jsur == 0.5)
+datE <- subset(eig.all, phi==1 & gamma == 0.5 & jsur == 0.5)
+datF <- subset(eig.all, phi==1 & gamma == 0.7 & jsur == 0.5)
+datG <- subset(eig.all, phi==1 & gamma == 0.9 & jsur == 0.5)
 
 #phi 1
 p1 <- ggplot(datC, aes(x=sigma, y=lam)) +
@@ -161,23 +162,23 @@ geom_line(data=datG, aes(color="0.9")) +
   labs(color = "g", x = expression(sigma), y = expression(lambda))
 
 #phi 0
-datH <- subset(eig.all, phi==0& gbar == 0.1 & jsur == 0.5)
-datI <- subset(eig.all, phi==0 & gbar == 0.3 & jsur == 0.5)
-datJ <- subset(eig.all, phi==0 & gbar == 0.5 & jsur == 0.5)
-datK <- subset(eig.all, phi==0 & gbar == 0.7 & jsur == 0.5)
-datL <- subset(eig.all, phi==0 & gbar == 0.9 & jsur == 0.5)
+datH <- subset(eig.all, phi==0& gamma == 0.1 & jsur == 0.5)
+datI <- subset(eig.all, phi==0 & gamma == 0.3 & jsur == 0.5)
+datJ <- subset(eig.all, phi==0 & gamma == 0.5 & jsur == 0.5)
+datK <- subset(eig.all, phi==0 & gamma == 0.7 & jsur == 0.5)
+datL <- subset(eig.all, phi==0 & gamma == 0.9 & jsur == 0.5)
 
-datM <- subset(eig.all, phi == 0.5 & gbar==0.1 & jsur==0.5)
-datN <- subset(eig.all, phi == 0.5 & gbar==0.3 & jsur==0.5)
-datO <- subset(eig.all, phi ==0.5 & gbar==0.5 & jsur==0.5)
-datP <- subset(eig.all, phi == 0.5 & gbar==0.7 & jsur==0.5)
-datQ <- subset(eig.all, phi ==0.5 & gbar==0.9 & jsur==0.5)
+datM <- subset(eig.all, phi == 0.5 & gamma==0.1 & jsur==0.5)
+datN <- subset(eig.all, phi == 0.5 & gamma==0.3 & jsur==0.5)
+datO <- subset(eig.all, phi ==0.5 & gamma==0.5 & jsur==0.5)
+datP <- subset(eig.all, phi == 0.5 & gamma==0.7 & jsur==0.5)
+datQ <- subset(eig.all, phi ==0.5 & gamma==0.9 & jsur==0.5)
 
-datR <- subset(eig.all, phi == -0.3 & gbar==0.1 & jsur==0.5)
-datS <- subset(eig.all, phi == -0.3 & gbar==0.3 & jsur==0.5)
-datT <- subset(eig.all, phi == -0.3 & gbar==0.5 & jsur==0.5)
-datU <- subset(eig.all, phi == -0.3 & gbar==0.7 & jsur==0.5)
-datV <- subset(eig.all, phi == -0.3 & gbar==0.9 & jsur==0.5)
+datR <- subset(eig.all, phi == -0.3 & gamma==0.1 & jsur==0.5)
+datS <- subset(eig.all, phi == -0.3 & gamma==0.3 & jsur==0.5)
+datT <- subset(eig.all, phi == -0.3 & gamma==0.5 & jsur==0.5)
+datU <- subset(eig.all, phi == -0.3 & gamma==0.7 & jsur==0.5)
+datV <- subset(eig.all, phi == -0.3 & gamma==0.9 & jsur==0.5)
 
 
 p2 <- ggplot(datH, aes(x=sigma, y=lam)) +
@@ -193,26 +194,38 @@ dat.pan2 <- rbind(datM,datN,datO,datP,datQ,datR,datS,datT,datU,datV)
 dat.pan3 <- rbind(datE,datJ,datO,datT)
 dat.all <- rbind(dat.pan,dat.pan2)
 
+
+#Create something for labels first 
+value1 <- c(-0.3,0,0.5,1)
+value2 <- c(0.1,0.3,0.5,0.7,0.9)
+labsx <- list(bquote(g==.(value1)),bquote(phi==.(value2)))
+labsx <- list(bquote(phi==.(value1)),bquote(g==.(value2)))
+
+#mf labeller
+
 #Figure 2 
-p3 <- ggplot(dat.all, aes(sigma, lam, colour=gbar)) + geom_line()
-p3 + facet_grid(gbar~ phi) + 
-labs(x=expression(sigma), y=expression(lambda), color="g")
+#Want to get phi as a symbol and gbar as a g with a line over it 
+p3 <- ggplot(dat.all, aes(sigma, lam)) + geom_line()
+p3 + facet_grid(gamma~ phi, labeller=label_parsed) + 
+labs(x=expression(sigma), y=expression(lambda))
+
 
 #Figure 3 - R0 as a function of sigma (similar style as 3)
-p4 <- ggplot(dat.all, aes(sigma, R0, colour=gbar)) + geom_line()
+#change to R0 with subscript
+p4 <- ggplot(dat.all, aes(sigma, R0)) + geom_line()
 p4 + facet_grid(gbar ~ phi) +
-labs(x=expression(sigma), y="Net Reproductive Rate", color = "g")
+labs(x=expression(sigma), y="Net Reproductive Rate")
 
 #Figure 4 - T as a function of sigma (similar style as 3)
 ##FIX
-p5 <- ggplot(dat.all, aes(sigma, time, colour=gbar)) + geom_line()
+p5 <- ggplot(dat.all, aes(sigma, time)) + geom_line()
 p5 + facet_grid(gbar ~ phi) +
   labs(x=expression(sigma),y="Generation Time")
 
 #Figure 5 - Damping ratio panel (similar style as 3)
-p6 <- ggplot(dat.all, aes(sigma, DampR, colour=gbar)) + geom_line()
+p6 <- ggplot(dat.all, aes(sigma, DampR)) + geom_line()
 p6 + facet_grid(gbar ~ phi) +
-  labs(x=expression(sigma), y="Damping Ratio", color = "g") +
+  labs(x=expression(sigma), y="Damping Ratio") +
   #changes text size in panels 
 theme(strip.text.x = element_text(size = 13)) +
   theme(strip.text.y = element_text(size = 13))
@@ -241,13 +254,13 @@ tf2 <- splitA(fast, r =1, c=2)
 Tmat2 <- tf2$T
 f2 <- fundamental.matrix(Tmat2)
 
-matplot2(pop.projection(slow, c(1,1), 100)$stage.vectors, col= 10:12, 
+matplot2(pop.projection(slow, c(1,1), 100)$stage.vectors, col= 10:11, 
          lwd = 3, proportions = TRUE, legend= "topright")
-matplot2(pop.projection(fast, c(1,1), 100)$stage.vectors, col = 10:12,
+matplot2(pop.projection(fast, c(1,1), 100)$stage.vectors, col = 10:11,
          lwd = 3, proportions = TRUE, legend= "topright")
 
-matplot2(pop.projection(slow, c(1,1), 100)$stage.vectors, col= 10:12, 
+matplot2(pop.projection(slow, c(1,1), 100)$stage.vectors, col= 10:11, 
          lwd = 3, proportions = FALSE, legend= "topright")
-matplot2(pop.projection(fast, c(1,1), 100)$stage.vectors, col = 10:12,
+matplot2(pop.projection(fast, c(1,1), 100)$stage.vectors, col = 10:11,
          lwd = 3, proportions = FALSE, legend= "topright")
 
