@@ -230,6 +230,8 @@ fast <- matrix(fa, nrow=2, ncol=2, byrow=TRUE)
 
 colnames(slow) <- c("slow juvenile", "slow adult")
 colnames(fast) <- c("fast juvenile", "fast adult")
+rownames(slow) <- c("slow juvenile", "slow adult")
+rownames(fast) <- c("fast juvenile", "fast adult")
 
 tf <- splitA(slow, r = 1, c=2)
 Tmat1 <- tf$T
@@ -238,4 +240,14 @@ f1 <- fundamental.matrix(Tmat1)
 tf2 <- splitA(fast, r =1, c=2)
 Tmat2 <- tf2$T
 f2 <- fundamental.matrix(Tmat2)
+
+matplot2(pop.projection(slow, c(1,1), 100)$stage.vectors, col= 10:12, 
+         lwd = 3, proportions = TRUE, legend= "topright")
+matplot2(pop.projection(fast, c(1,1), 100)$stage.vectors, col = 10:12,
+         lwd = 3, proportions = TRUE, legend= "topright")
+
+matplot2(pop.projection(slow, c(1,1), 100)$stage.vectors, col= 10:12, 
+         lwd = 3, proportions = FALSE, legend= "topright")
+matplot2(pop.projection(fast, c(1,1), 100)$stage.vectors, col = 10:12,
+         lwd = 3, proportions = FALSE, legend= "topright")
 
