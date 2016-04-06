@@ -222,18 +222,18 @@ labs(x=expression(sigma), y=expression(lambda))
 #Figure 3 - R0 as a function of sigma (similar style as 3)
 #change to R0 with subscript
 p4 <- ggplot(dat.all, aes(sigma, R0)) + geom_line()
-p4 + facet_grid(gbar ~ phi) +
+p4 + facet_grid(gamma ~ phi) +
 labs(x=expression(sigma), y="Net Reproductive Rate")
 
 #Figure 4 - T as a function of sigma (similar style as 3)
 ##FIX
 p5 <- ggplot(dat.all, aes(sigma, time)) + geom_line()
-p5 + facet_grid(gbar ~ phi) +
+p5 + facet_grid(gamma ~ phi) +
   labs(x=expression(sigma),y="Generation Time")
 
 #Figure 5 - Damping ratio panel (similar style as 3)
 p6 <- ggplot(dat.all, aes(sigma, DampR)) + geom_line()
-p6 + facet_grid(gbar ~ phi) +
+p6 + facet_grid(gamma ~ phi) +
   labs(x=expression(sigma), y="Damping Ratio") +
   #changes text size in panels 
 theme(strip.text.x = element_text(size = 13)) +
