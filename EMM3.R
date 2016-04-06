@@ -60,7 +60,7 @@ ii <- 0
 
 gb <- 0.01 * (1:99)
 S <- 0
-for (h in 8:9){
+for (h in 10:11){
   S <- (h - 2) * 0.1
   phi <- 0
   for (k in 0:20){
@@ -115,23 +115,32 @@ eig.new <- eig.dat[,1:10]
 names(eig.new) <- c("gbar", "jsur", "sigma", "lam","eigen2", "phi", "r", "R0","DampR", "time")
 head(eig.new)
 ## Simulation output with s  = 0.6 and 0.7
-eigen <- write.csv(eig.new, file = "eigen.csv")
+#eigen9 <- write.csv(eig.new, file= "eigen9.csv")
+#eigen <- write.csv(eig.new, file = "eigen.csv")
 
-#Read in stored file with s = 0.3, 0.4, and 0. 5
+#Read in all stored files 
 eig.2 <- read.csv("eigen2.csv", head=TRUE)
+str(eig.2)
 #tmp <- read.csv("eigen2.csv", nrows = 150500)
-#Stored file with s = 0.6, 0.7
 eig.3 <- read.csv("eigen.csv", head=TRUE)
+str(eig.3)
+eig.4 <- read.csv("eigenapril.csv", head=TRUE)
+str(eig.4)
+eig.5 <- read.csv("eigen9.csv", head=TRUE)
+str(eig.5)
 
-eig.all <- rbind(eig.2, eig.3)
+
+eig.all <- rbind(eig.4,eig.2,eig.3,eig.5)
+str(eig.all)
+eig.all["r"] <-log(eig.all$lam)
 names(eig.all)[names(eig.all)=='gbar'] <- 'gamma'
 
 ##Figures - labeled as intended for manuscript (Fig 1 is life cycle)
 
 #Figure 2 - lambda as a function of sigma across different g at 2 phis
 #2 figures (or more, can increase to 4 panels) in one, phi = 1 and phi = 0
-datA <- subset(eig.all, phi=="1" & jsur == "0.7" & gbar == "0.5")
-datB <- subset(eig.all, phi=="0" & jsur == "0.7" & gbar == "0.5")
+datA <- subset(eig.all, phi=="1" & jsur == "0.7" & gamma == "0.5")
+datB <- subset(eig.all, phi=="0" & jsur == "0.7" & gamma == "0.5")
 datAB <- rbind(datA, datB)
 
 #Just one line first for practice 
