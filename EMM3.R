@@ -193,14 +193,14 @@ dat.all <- rbind(dat.pan,dat.pan2)
 
 
 #Create something for labels first 
-value1 <- c(-0.3,0,0.5,1)
-value2 <- c(0.1,0.3,0.5,0.7,0.9)
-labsx <- list(bquote(gamma==.(value1)),bquote(phi==.(value2)))
-labsx <- list(bquote(phi==.(value1)),bquote(g==.(value2)))
+#value1 <- c(-0.3,0,0.5,1)
+#value2 <- c(0.1,0.3,0.5,0.7,0.9)
+#labsx <- list(bquote(gamma==.(value1)),bquote(phi==.(value2)))
+#labsx <- list(bquote(phi==.(value1)),bquote(g==.(value2)))
 
 #Label function -  taken from stackoverflow
 #http://stackoverflow.com/questions/14181234/facet-labels-involving-a-greek-symbol
-my.label <- function (expr1 = (gamma == .(x)),expr2 = (phi == .(x))) 
+my.label <- function (expr1 = gamma == .(x), expr2 = phi == .(x)) 
 {
   quoted1<- substitute(expr1)
   quoted2 <- substitute(expr2)
@@ -220,28 +220,53 @@ my.label <- function (expr1 = (gamma == .(x)),expr2 = (phi == .(x)))
 
 p3 <- ggplot(dat.all, aes(sigma, lam)) + geom_line()
 p3 + facet_grid(gamma~ phi, labeller=my.label()) + 
-labs(x=expression(sigma), y=expression(lambda))
+labs(x=expression(sigma), y=expression(lambda)) +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
 
 
 #Figure 3 - R0 as a function of sigma (similar style as 3)
 #change to R0 with subscript
 p4 <- ggplot(dat.all, aes(sigma, R0)) + geom_line()
-p4 + facet_grid(gamma ~ phi) +
-labs(x=expression(sigma), y=expression('R'[0]))
+p4 + facet_grid(gamma ~ phi,labeller=my.label()) +
+labs(x=expression(sigma), y=expression('R'[0])) +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) +
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
 
 #Figure 4 - T as a function of sigma (similar style as 3)
 ##FIX
 p5 <- ggplot(dat.all, aes(sigma, time)) + geom_line()
-p5 + facet_grid(gamma ~ phi) +
-  labs(x=expression(sigma),y="Generation Time")
+p5 + facet_grid(gamma ~ phi,labeller=my.label()) +
+  labs(x=expression(sigma),y=expression('T'[1])) +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) +
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
 
 #Figure 5 - Damping ratio panel (similar style as 3)
 p6 <- ggplot(dat.all, aes(sigma, DampR)) + geom_line()
-p6 + facet_grid(gamma ~ phi) +
+p6 + facet_grid(gamma ~ phi,labeller=my.label()) +
   labs(x=expression(sigma), y="Damping Ratio") +
   #changes text size in panels 
-theme(strip.text.x = element_text(size = 13)) +
-  theme(strip.text.y = element_text(size = 13))
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) +
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
 
 
 #Figure 6 - mat plot, SSD (NOTE- might want to use just this and not Fig 5)
@@ -278,7 +303,7 @@ matplot2(pop.projection(fast, c(1,1), 100)$stage.vectors, col = 10:11,
          lwd = 3, proportions = FALSE, legend= "topright")
 
 
-
+#################################
 
 #### 7 April 2016 - practice code 
 #2 figures (or more, can increase to 4 panels) in one, phi = 1 and phi = 0
@@ -293,3 +318,5 @@ ggplot(datA, aes(x=sigma, y =lam)) +
   geom_line(aes(color="Phi = 1")) +
   geom_line(data=datB, aes(colour="Phi = 0")) + labs(x = expression(sigma),
                                                      y = expression(lambda), color="Legend") 
+
+
