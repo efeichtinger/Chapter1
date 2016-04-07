@@ -22,6 +22,7 @@ library(popbio)
 library(scatterplot3d)
 library(ggplot2)
 library(plot3D)
+library(grid)
 
 #function for estimating Bienvenus's T
 Bien.T <- function(L, v, w, r){
@@ -131,9 +132,9 @@ str(eig.5)
 
 
 eig.all <- rbind(eig.4,eig.2,eig.3,eig.5)
-str(eig.all)
 eig.all["r"] <-log(eig.all$lam)
 names(eig.all)[names(eig.all)=='gbar'] <- 'gamma'
+str(eig.all)
 
 ##Figures - labeled as intended for manuscript (Fig 1 is life cycle)
 
@@ -142,33 +143,20 @@ names(eig.all)[names(eig.all)=='gbar'] <- 'gamma'
 datA <- subset(eig.all, phi=="1" & jsur == "0.7" & gamma == "0.5")
 datB <- subset(eig.all, phi=="0" & jsur == "0.7" & gamma == "0.5")
 datAB <- rbind(datA, datB)
-
-#Just one line first for practice 
-plotA <- ggplot(datAB, aes(sigma, lam))
-plotA + geom_line(colour = "red", linetype="solid", size = 1) + xlim(0,0.5) +
-  ylim(1,1.4) + labs(x = expression(sigma), y = expression(lambda)) 
-
-#Start here I guess - multiple phi's on one plot with 1 g and 1 s
-ggplot(datA, aes(x=sigma, y =lam)) + 
-  geom_line(aes(color="Phi = 1")) +
-  geom_line(data=datB, aes(colour="Phi = 0")) + labs(x = expression(sigma),
-        y = expression(lambda), color="Legend") 
-
-#Could do with multiple g's (and s?) for 4 different phi's in a panel 
 datC <- subset(eig.all, phi==1 & gamma == 0.1 & jsur == 0.5)
 datD <- subset(eig.all, phi==1 & gamma == 0.3 & jsur == 0.5)
 datE <- subset(eig.all, phi==1 & gamma == 0.5 & jsur == 0.5)
 datF <- subset(eig.all, phi==1 & gamma == 0.7 & jsur == 0.5)
 datG <- subset(eig.all, phi==1 & gamma == 0.9 & jsur == 0.5)
 
-#phi 1
-p1 <- ggplot(datC, aes(x=sigma, y=lam)) +
-geom_line(aes(color="0.1")) + 
-geom_line(data=datD, aes(color="0.3")) +
-geom_line(data=datE, aes(color="0.5")) +
-geom_line(data=datF, aes(color="0.7")) +
-geom_line(data=datG, aes(color="0.9")) +
-  labs(color = "g", x = expression(sigma), y = expression(lambda))
+#phi 1 Code does not work
+#p1 <- ggplot(datC, aes(x=sigma, y=lam)) +
+#geom_line(aes(color="0.1")) + 
+#geom_line(data=datD, aes(color="0.3")) +
+#geom_line(data=datE, aes(color="0.5")) +
+#geom_line(data=datF, aes(color="0.7")) +
+#geom_line(data=datG, aes(color="0.9")) +
+  #labs(color = "g", x = expression(sigma), y = expression(lambda))
 
 #phi 0
 datH <- subset(eig.all, phi==0& gamma == 0.1 & jsur == 0.5)
@@ -190,13 +178,13 @@ datU <- subset(eig.all, phi == -0.3 & gamma==0.7 & jsur==0.5)
 datV <- subset(eig.all, phi == -0.3 & gamma==0.9 & jsur==0.5)
 
 
-p2 <- ggplot(datH, aes(x=sigma, y=lam)) +
-  geom_line(aes(color="0.1")) + 
-  geom_line(data=datI, aes(color="0.3")) +
-  geom_line(data=datJ, aes(color="0.5")) +
-  geom_line(data=datK, aes(color="0.7")) +
-  geom_line(data=datL, aes(color="0.9")) +
-  labs(color = "g", x = expression(sigma), y = expression(lambda))
+#p2 <- ggplot(datH, aes(x=sigma, y=lam)) +
+  #geom_line(aes(color="0.1")) + 
+  #geom_line(data=datI, aes(color="0.3")) +
+  #geom_line(data=datJ, aes(color="0.5")) +
+  #geom_line(data=datK, aes(color="0.7")) +
+  #geom_line(data=datL, aes(color="0.9")) +
+  #labs(color = "g", x = expression(sigma), y = expression(lambda))
 
 dat.pan <- rbind(datC,datD,datE,datF,datG,datH,datI,datJ,datK,datL)
 dat.pan2 <- rbind(datM,datN,datO,datP,datQ,datR,datS,datT,datU,datV)
@@ -207,15 +195,31 @@ dat.all <- rbind(dat.pan,dat.pan2)
 #Create something for labels first 
 value1 <- c(-0.3,0,0.5,1)
 value2 <- c(0.1,0.3,0.5,0.7,0.9)
-labsx <- list(bquote(g==.(value1)),bquote(phi==.(value2)))
+labsx <- list(bquote(gamma==.(value1)),bquote(phi==.(value2)))
 labsx <- list(bquote(phi==.(value1)),bquote(g==.(value2)))
 
-#mf labeller
+#Label function -  taken from stackoverflow
+#http://stackoverflow.com/questions/14181234/facet-labels-involving-a-greek-symbol
+my.label <- function (expr1 = (gamma == .(x)),expr2 = (phi == .(x))) 
+{
+  quoted1<- substitute(expr1)
+  quoted2 <- substitute(expr2)
+  function(variable, value) {
+    value <- as.character(value)
+    if(variable == 'gamma')
+      lapply(value, function(x)
+        eval(substitute(bquote(expr1, list(x = x)),list(expr1 = quoted1))))
+    else
+      lapply(value, function(x) 
+        eval(substitute(bquote(expr2, list(x = x)),list(expr2 = quoted2))))
+  }
+}
 
 #Figure 2 
-#Want to get phi as a symbol and gbar as a g with a line over it 
+#Want to get phi as a symbol and gbar as a g with a line over it
+
 p3 <- ggplot(dat.all, aes(sigma, lam)) + geom_line()
-p3 + facet_grid(gamma~ phi, labeller=label_parsed) + 
+p3 + facet_grid(gamma~ phi, labeller=my.label()) + 
 labs(x=expression(sigma), y=expression(lambda))
 
 
@@ -223,7 +227,7 @@ labs(x=expression(sigma), y=expression(lambda))
 #change to R0 with subscript
 p4 <- ggplot(dat.all, aes(sigma, R0)) + geom_line()
 p4 + facet_grid(gamma ~ phi) +
-labs(x=expression(sigma), y="Net Reproductive Rate")
+labs(x=expression(sigma), y=expression('R'[0]))
 
 #Figure 4 - T as a function of sigma (similar style as 3)
 ##FIX
@@ -273,3 +277,19 @@ matplot2(pop.projection(slow, c(1,1), 100)$stage.vectors, col= 10:11,
 matplot2(pop.projection(fast, c(1,1), 100)$stage.vectors, col = 10:11,
          lwd = 3, proportions = FALSE, legend= "topright")
 
+
+
+
+#### 7 April 2016 - practice code 
+#2 figures (or more, can increase to 4 panels) in one, phi = 1 and phi = 0
+
+#Just one line first for practice 
+plotA <- ggplot(datAB, aes(sigma, lam))
+plotA + geom_line(colour = "red", linetype="solid", size = 1) + xlim(0,0.5) +
+  ylim(1,1.4) + labs(x = expression(sigma), y = expression(lambda)) 
+
+#Start here I guess - multiple phi's on one plot with 1 g and 1 s
+ggplot(datA, aes(x=sigma, y =lam)) + 
+  geom_line(aes(color="Phi = 1")) +
+  geom_line(data=datB, aes(colour="Phi = 0")) + labs(x = expression(sigma),
+                                                     y = expression(lambda), color="Legend") 
