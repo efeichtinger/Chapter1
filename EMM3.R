@@ -334,7 +334,7 @@ d <- rbind(dJ1, dJ2, dJ3, dJ4, dJ5, dJ6, dJ7, dJ8, dJ9)
 
 
 pJ <- ggplot(d, aes(sigma, lam)) + geom_line()
-pJ + facet_grid(jsur~ phi, labeller=my.label()) + 
+pJ + facet_grid(jsur~ phi, labeller=label_both) + 
   labs(x=expression(sigma), y=expression(lambda)) +
   theme(strip.text.x = element_text(size = 13)) +
   theme(strip.text.y = element_text(size = 13)) + 
@@ -343,14 +343,24 @@ pJ + facet_grid(jsur~ phi, labeller=my.label()) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
   theme(axis.title.y = element_text(size = 15, face = 'bold'))
 
-dK1 <- subset(eig.all, phi==1 & gamma == 0.6 & jsur == 0.1)
-dK2 <- subset(eig.all, phi==1 & gamma == 0.6 & jsur == 0.2)
-dK3 <- subset(eig.all, phi==1 & gamma == 0.6 & jsur == 0.3)
-dK4 <- subset(eig.all, phi==1 & gamma == 0.6 & jsur == 0.4)
-dK5 <- subset(eig.all, phi==1 & gamma == 0.6 & jsur == 0.5)
-dK6 <- subset(eig.all, phi==1 & gamma == 0.6 & jsur == 0.6)
-dK7 <- subset(eig.all, phi==1 & gamma == 0.6 & jsur == 0.7)
-dK8 <- subset(eig.all, phi==1 & gamma == 0.6 & jsur == 0.8)
-dK9 <- subset(eig.all, phi==1 & gamma == 0.6 & jsur == 0.9)
+dK1 <- subset(eig.all, phi==0 & gamma == 0.6 & jsur == 0.1)
+dK2 <- subset(eig.all, phi==0 & gamma == 0.6 & jsur == 0.2)
+dK3 <- subset(eig.all, phi==0 & gamma == 0.6 & jsur == 0.3)
+dK4 <- subset(eig.all, phi==0 & gamma == 0.6 & jsur == 0.4)
+dK5 <- subset(eig.all, phi==0 & gamma == 0.6 & jsur == 0.5)
+dK6 <- subset(eig.all, phi==0 & gamma == 0.6 & jsur == 0.6)
+dK7 <- subset(eig.all, phi==0 & gamma == 0.6 & jsur == 0.7)
+dK8 <- subset(eig.all, phi==0 & gamma == 0.6 & jsur == 0.8)
+dK9 <- subset(eig.all, phi==0 & gamma == 0.6 & jsur == 0.9)
 
+dd <- rbind(dK1,dK2,dK3,dK4,dK5,dK6,dK7,dK8,dK9)
 
+pd <- ggplot(dd, aes(sigma, lam)) + geom_line()
+pd + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y=expression(lambda)) +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
