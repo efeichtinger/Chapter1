@@ -143,11 +143,11 @@ str(eig.all)
 datA <- subset(eig.all, phi=="1" & jsur == "0.7" & gamma == "0.5")
 datB <- subset(eig.all, phi=="0" & jsur == "0.7" & gamma == "0.5")
 datAB <- rbind(datA, datB)
-datC <- subset(eig.all, phi==1 & gamma == 0.1 & jsur == 0.5)
-datD <- subset(eig.all, phi==1 & gamma == 0.3 & jsur == 0.5)
-datE <- subset(eig.all, phi==1 & gamma == 0.5 & jsur == 0.5)
-datF <- subset(eig.all, phi==1 & gamma == 0.7 & jsur == 0.5)
-datG <- subset(eig.all, phi==1 & gamma == 0.9 & jsur == 0.5)
+datC <- subset(eig.all, phi==0.9 & gamma == 0.1 & jsur == 0.5)
+datD <- subset(eig.all, phi==0.9 & gamma == 0.3 & jsur == 0.5)
+datE <- subset(eig.all, phi==0.9 & gamma == 0.5 & jsur == 0.5)
+datF <- subset(eig.all, phi==0.9 & gamma == 0.7 & jsur == 0.5)
+datG <- subset(eig.all, phi==0.9 & gamma == 0.9 & jsur == 0.5)
 
 #phi 1 Code does not work
 #p1 <- ggplot(datC, aes(x=sigma, y=lam)) +
@@ -227,6 +227,17 @@ labs(x=expression(sigma), y=expression(lambda)) +
   theme(axis.text.y = element_text(size = 11)) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
   theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+p3b <- ggplot(dat.all, aes(sigma, r)) + geom_line()
+p3b + facet_grid(gamma~ phi, labeller=my.label()) + 
+  labs(x=expression(sigma), y="r") +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
 
 
 #Figure 3 - R0 as a function of sigma (similar style as 3)
