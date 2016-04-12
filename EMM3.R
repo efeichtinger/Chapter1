@@ -296,10 +296,10 @@ slow2 <- matrix(sl, nrow=2, ncol =2, byrow =TRUE)
 fast <- matrix(fa, nrow=2, ncol=2, byrow=TRUE)
 
 
-colnames(slow) <- c("slow juvenile", "slow adult")
-colnames(fast) <- c("fast juvenile", "fast adult")
-rownames(slow) <- c("slow juvenile", "slow adult")
-rownames(fast) <- c("fast juvenile", "fast adult")
+colnames(slow) <- c("Slow juvenile", "Slow adult")
+colnames(fast) <- c("Fast juvenile", "Fast adult")
+rownames(slow) <- c("Slow juvenile", "Slow adult")
+rownames(fast) <- c("Fast juvenile", "Fast adult")
 
 tf <- splitA(slow, r = 1, c=2)
 Tmat1 <- tf$T
@@ -310,16 +310,168 @@ Tmat2 <- tf2$T
 f2 <- fundamental.matrix(Tmat2)
 
 matplot2(pop.projection(slow, c(1,1), 100)$stage.vectors, col= 10:11, 
-         lwd = 3, proportions = TRUE, legend= "topright")
+         lwd = 3, proportions = TRUE, legend= "right")
 matplot2(pop.projection(fast, c(1,1), 100)$stage.vectors, col = 10:11,
-         lwd = 3, proportions = TRUE, legend= "topright")
+         lwd = 3, proportions = TRUE, legend= "right")
 
 matplot2(pop.projection(slow, c(1,1), 100)$stage.vectors, col= 10:11, 
-         lwd = 3, proportions = FALSE, legend= "topright")
+         lwd = 3, proportions = FALSE, legend= "topleft")
 matplot2(pop.projection(fast, c(1,1), 100)$stage.vectors, col = 10:11,
-         lwd = 3, proportions = FALSE, legend= "topright")
+         lwd = 3, proportions = FALSE, legend= "topleft")
+
+### Population dynamics 
+
+eig.slow <- eigen.analysis(slow)
+eig.fast <- eigen.analysis(fast)
+
+R0.slow <- net.reproductive.rate(slow, r = 1, c = 2)
+R0.fast <- net.reproductive.rate(fast, r = 1, c = 2)
+
+t.slow <- generation.time(slow, r = 1, c = 2)
+t.fast <- generation.time(fast, r = 1, c = 2)
+
+eig.slow
+eig.fast
+R0.slow
+R0.fast
+t.slow
+t.fast
+
+## monotypic populations at different g's 
+#g = 0.1, all other parameters the same 
+s2 <- matrix(c(0.475,1,0.025,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+f2 <- matrix(c(0.425,1,0.075,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+colnames(s2) <- c("Slow juvenile", "Slow adult")
+colnames(f2) <- c("Fast juvenile", "Fast adult")
+rownames(s2) <- c("Slow juvenile", "Slow adult")
+rownames(f2) <- c("Fast juvenile", "Fast adult")
+s2
+f2
+
+#g = 0.2
+s3 <- matrix(c(0.425,1,0.075,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+f3 <- matrix(c(0.375,1,0.125,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+colnames(s3) <- c("Slow juvenile", "Slow adult")
+colnames(f3) <- c("Fast juvenile", "Fast adult")
+rownames(s3) <- c("Slow juvenile", "Slow adult")
+rownames(f3) <- c("Fast juvenile", "Fast adult")
+
+#g = 0.3
+s4 <- matrix(c(0.375,1,0.125,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+f4 <- matrix(c(0.325,1,0.175,0.7, nrow = 2, ncol = 2, byrow=TRUE))
+colnames(s4) <- c("Slow juvenile", "Slow adult")
+colnames(f4) <- c("Fast juvenile", "Fast adult")
+rownames(s4) <- c("Slow juvenile", "Slow adult")
+rownames(f4) <- c("Fast juvenile", "Fast adult")
+
+#g = 0.4
+s5 <- matrix(c(0.325,1,0.175,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+f5 <- matrix(c(0.275,1,0.225,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+colnames(s5) <- c("Slow juvenile", "Slow adult")
+colnames(f5) <- c("Fast juvenile", "Fast adult")
+rownames(s5) <- c("Slow juvenile", "Slow adult")
+rownames(f5) <- c("Fast juvenile", "Fast adult")
+
+#g = 0.6 
+s6 <- matrix(c(0.225,1,0.275,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+f6 <- matrix(c(0.175,1,0.325,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+colnames(s6) <- c("Slow juvenile", "Slow adult")
+colnames(f6) <- c("Fast juvenile", "Fast adult")
+rownames(s6) <- c("Slow juvenile", "Slow adult")
+rownames(f6) <- c("Fast juvenile", "Fast adult")
+
+#g = 0.7 
+s7 <- matrix(c(0.175,1,0.325,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+f7 <- matrix(c(0.125,1,0.375,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+colnames(s7) <- c("Slow juvenile", "Slow adult")
+colnames(f7) <- c("Fast juvenile", "Fast adult")
+rownames(s7) <- c("Slow juvenile", "Slow adult")
+rownames(f7) <- c("Fast juvenile", "Fast adult")
+
+#g = 0.8 
+s8 <- matrix(c(0.125,1,0.375,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+f8 <- matrix(c(0.075,1,0.425,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+colnames(s8) <- c("Slow juvenile", "Slow adult")
+colnames(f8) <- c("Fast juvenile", "Fast adult")
+rownames(s8) <- c("Slow juvenile", "Slow adult")
+rownames(f8) <- c("Fast juvenile", "Fast adult")
+
+#g = 0.9
+s9 <- matrix(c(0.075,1,0.425,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+f9 <- matrix(c(0.025,1,0.475,0.7), nrow = 2, ncol = 2, byrow=TRUE)
+colnames(s9) <- c("Slow juvenile", "Slow adult")
+colnames(f9) <- c("Fast juvenile", "Fast adult")
+rownames(s9) <- c("Slow juvenile", "Slow adult")
+rownames(f9) <- c("Fast juvenile", "Fast adult")
 
 
+## Pop dynamics s2-s9 and f2-f9
+#g = 0.1
+eig.s2 <- eigen.analysis(s2)
+eig.f2 <- eigen.analysis(f2)
+R0.s2 <- net.reproductive.rate(slow, r = 1, c = 2)
+R0.f2 <- net.reproductive.rate(fast, r = 1, c = 2)
+t.s2 <- generation.time(slow, r = 1, c = 2)
+t.f2 <- generation.time(fast, r = 1, c = 2)
+
+#g = 0.2
+eig.s3 <- eigen.analysis(s2)
+eig.f3 <- eigen.analysis(f2)
+R0.s3 <- net.reproductive.rate(slow, r = 1, c = 2)
+R0.f3 <- net.reproductive.rate(fast, r = 1, c = 2)
+t.s3 <- generation.time(slow, r = 1, c = 2)
+t.f3 <- generation.time(fast, r = 1, c = 2)
+
+#g = 0.3 
+eig.s4 <- eigen.analysis(s2)
+eig.f4 <- eigen.analysis(f2)
+R0.s4 <- net.reproductive.rate(slow, r = 1, c = 2)
+R0.f4 <- net.reproductive.rate(fast, r = 1, c = 2)
+t.s4 <- generation.time(slow, r = 1, c = 2)
+t.f4 <- generation.time(fast, r = 1, c = 2)
+
+#g = 0.4
+eig.s5 <- eigen.analysis(s2)
+eig.f5 <- eigen.analysis(f2)
+R0.s5 <- net.reproductive.rate(slow, r = 1, c = 2)
+R0.f5 <- net.reproductive.rate(fast, r = 1, c = 2)
+t.s5 <- generation.time(slow, r = 1, c = 2)
+t.f5 <- generation.time(fast, r = 1, c = 2)
+
+#g = 0.6 
+eig.s6 <- eigen.analysis(s2)
+eig.f6 <- eigen.analysis(f2)
+R0.s6 <- net.reproductive.rate(slow, r = 1, c = 2)
+R0.f6 <- net.reproductive.rate(fast, r = 1, c = 2)
+t.s6 <- generation.time(slow, r = 1, c = 2)
+t.f6 <- generation.time(fast, r = 1, c = 2)
+
+#g = 0.7
+eig.s7 <- eigen.analysis(s2)
+eig.f7 <- eigen.analysis(f2)
+R0.s7 <- net.reproductive.rate(slow, r = 1, c = 2)
+R0.f7 <- net.reproductive.rate(fast, r = 1, c = 2)
+t.s7 <- generation.time(slow, r = 1, c = 2)
+t.f7 <- generation.time(fast, r = 1, c = 2)
+
+#g = 0.8
+eig.s8 <- eigen.analysis(s2)
+eig.f8 <- eigen.analysis(f2)
+R0.s8 <- net.reproductive.rate(slow, r = 1, c = 2)
+R0.f8 <- net.reproductive.rate(fast, r = 1, c = 2)
+t.s8 <- generation.time(slow, r = 1, c = 2)
+t.f8 <- generation.time(fast, r = 1, c = 2)
+
+#g = 0.9
+eig.s9 <- eigen.analysis(s2)
+eig.f9 <- eigen.analysis(f2)
+R0.s9 <- net.reproductive.rate(slow, r = 1, c = 2)
+R0.f9 <- net.reproductive.rate(fast, r = 1, c = 2)
+t.s9 <- generation.time(slow, r = 1, c = 2)
+t.f9 <- generation.time(fast, r = 1, c = 2)
+
+
+#### Need to make a data frame of g, lambda, R0, T from the monotypic pops
 #################################
 
 #### 7 April 2016 - practice code 
