@@ -289,6 +289,12 @@ slow <- matrix(sl, nrow=2, ncol =2, byrow =TRUE)
 fa <- c(0.225, 1, 0.275, 0.7)
 fast <- matrix(fa, nrow=2, ncol=2, byrow=TRUE)
 
+#s= 0.6, g = 0.6, sigma = 0.05 
+s2 <- c(0.27,1,0.33,0.7)
+f2 <- c(0.21,1,0.39,0.7)
+slow2 <- matrix(sl, nrow=2, ncol =2, byrow =TRUE)
+fast <- matrix(fa, nrow=2, ncol=2, byrow=TRUE)
+
 
 colnames(slow) <- c("slow juvenile", "slow adult")
 colnames(fast) <- c("fast juvenile", "fast adult")
