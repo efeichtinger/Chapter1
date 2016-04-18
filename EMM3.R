@@ -279,6 +279,56 @@ p6 + facet_grid(gamma ~ phi,labeller=my.label()) +
   theme(axis.title.y = element_text(size = 15, face = 'bold'))
 
 
+#Pop dynamics (lambda, R0 and T) as a function of g in a single type population
+#I hope I'm understanding this correctly in that there is no sigma here 
+#But I do have code below where there is heterogeneity but phi = 1, so 
+#two subpopulations (fast and slow) with no production of opposite phenotype
+#offspring
+
+#Single type pop, all parameters fixed except for g (so sigma or phi)
+#Parameters: s = 0.5, F = 1, P = 0.7 
+
+#g = 0.1
+g1 <- matrix(c(0.45,1,0.05,0.7), nrow=2, ncol=2, byrow=TRUE)
+#g = 0.2
+g2 <- matrix(c(0.4,1,0.1,0.7), nrow =2, ncol=2, byrow=TRUE)
+#g = 0.3
+g3 <- matrix(c(0.35,1,0.15,0.7), nrow =2, ncol=2, byrow=TRUE)
+#g = 0.4
+g4 <- matrix(c(0.3,1,0.2,0.7), nrow =2, ncol=2, byrow=TRUE)
+#g = 0.5
+g5 <- matrix(c(0.25,1,0.25,0.7), nrow =2, ncol=2, byrow=TRUE)
+#g = 0.6
+g6 <- matrix(c(0.2,1,0.3,0.7), nrow =2, ncol=2, byrow=TRUE)
+#g = 0.7
+g7 <- matrix(c(0.15,1,0.35,0.7), nrow =2, ncol=2, byrow=TRUE)
+#g = 0.8
+g8 <- matrix(c(0.1,1,0.4,0.7), nrow =2, ncol=2, byrow=TRUE)
+#g = 0.9
+g9 <- matrix(c(0.05,1, 0.45,0.7), nrow =2, ncol=2, byrow=TRUE)
+
+eig1 <- eigen.analysis(g1)
+eig2 <- eigen.analysis(g2)
+eig3 <- eigen.analysis(g3)
+eig4 <- eigen.analysis(g4)
+eig5 <- eigen.analysis(g5)
+eig6 <- eigen.analysis(g6)
+eig7 <- eigen.analysis(g7)
+eig8 <- eigen.analysis(g8)
+eig9 <- eigen.analysis(g9)
+
+r1 <- net.reproductive.rate(g1)
+r1 <- net.reproductive.rate(g1)
+r1 <- net.reproductive.rate(g1)
+r1 <- net.reproductive.rate(g1)
+r1 <- net.reproductive.rate(g1)
+r1 <- net.reproductive.rate(g1)
+r1 <- net.reproductive.rate(g1)
+r1 <- net.reproductive.rate(g1)
+r1 <- net.reproductive.rate(g1)
+
+t1 <- generation.time(g1)
+
 
 #Figure 6 - mat plot, SSD (NOTE- might want to use just this and not Fig 5)
 #Monotypic populations (this can result from phi = 1, but don't present it this way
@@ -337,7 +387,7 @@ R0.fast
 t.slow
 t.fast
 
-## monotypic populations at different g's 
+## monotypic populations at different g's, all of these do have sigma
 #g = 0.1, all other parameters the same 
 s2 <- matrix(c(0.475,1,0.025,0.7), nrow = 2, ncol = 2, byrow=TRUE)
 f2 <- matrix(c(0.425,1,0.075,0.7), nrow = 2, ncol = 2, byrow=TRUE)
@@ -488,7 +538,9 @@ ggplot(datA, aes(x=sigma, y =lam)) +
   geom_line(data=datB, aes(colour="Phi = 0")) + labs(x = expression(sigma),
                                                      y = expression(lambda), color="Legend") 
 
-## Juvenile survival 
+## Juvenile survival
+
+#phi = 1
 dJ1 <- subset(eig.all, phi==1 & gamma == 0.6 & jsur == 0.1)
 dJ2 <- subset(eig.all, phi==1 & gamma == 0.6 & jsur == 0.2)
 dJ3 <- subset(eig.all, phi==1 & gamma == 0.6 & jsur == 0.3)
@@ -501,7 +553,7 @@ dJ9 <- subset(eig.all, phi==1 & gamma == 0.6 & jsur == 0.9)
 
 d <- rbind(dJ1, dJ2, dJ3, dJ4, dJ5, dJ6, dJ7, dJ8, dJ9)
 
-
+#Lambda
 pJ <- ggplot(d, aes(sigma, lam)) + geom_line()
 pJ + facet_grid(jsur~ phi, labeller=label_both) + 
   labs(x=expression(sigma), y=expression(lambda)) +
@@ -512,6 +564,42 @@ pJ + facet_grid(jsur~ phi, labeller=label_both) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
   theme(axis.title.y = element_text(size = 15, face = 'bold'))
 
+#R0
+pJ1 <- ggplot(d, aes(sigma, R0)) + geom_line()
+pJ1 + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y=expression('R'[0])) +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+#T
+pJ2 <- ggplot(d, aes(sigma, time)) + geom_line()
+pJ2 + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y="T") +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+#dr
+pJ3 <- ggplot(d, aes(sigma, DampR)) + geom_line()
+pJ3 + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y="Damping ratio") +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+
+
+#Phi=0
 dK1 <- subset(eig.all, phi==0 & gamma == 0.6 & jsur == 0.1)
 dK2 <- subset(eig.all, phi==0 & gamma == 0.6 & jsur == 0.2)
 dK3 <- subset(eig.all, phi==0 & gamma == 0.6 & jsur == 0.3)
@@ -524,6 +612,7 @@ dK9 <- subset(eig.all, phi==0 & gamma == 0.6 & jsur == 0.9)
 
 dd <- rbind(dK1,dK2,dK3,dK4,dK5,dK6,dK7,dK8,dK9)
 
+#Lambda
 pd <- ggplot(dd, aes(sigma, lam)) + geom_line()
 pd + facet_grid(jsur~ phi, labeller=label_both) + 
   labs(x=expression(sigma), y=expression(lambda)) +
@@ -533,3 +622,154 @@ pd + facet_grid(jsur~ phi, labeller=label_both) +
   theme(axis.text.y = element_text(size = 11)) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
   theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+
+#R0
+pd1 <- ggplot(dd, aes(sigma, R0)) + geom_line()
+pd1 + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y=expression('R'[0])) +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+#T
+pd2 <- ggplot(dd, aes(sigma, time)) + geom_line()
+pd2 + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y="T") +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+#dr
+pd4 <- ggplot(dd, aes(sigma, DampR)) + geom_line()
+pd4 + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y="Damping ratio") +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+
+#Phi =0.4
+dM1 <- subset(eig.all, phi==0.4 & gamma == 0.6 & jsur == 0.1)
+dM2 <- subset(eig.all, phi==0.4 & gamma == 0.6 & jsur == 0.2)
+dM3 <- subset(eig.all, phi==0.4 & gamma == 0.6 & jsur == 0.3)
+dM4 <- subset(eig.all, phi==0.4 & gamma == 0.6 & jsur == 0.4)
+dM5 <- subset(eig.all, phi==0.4 & gamma == 0.6 & jsur == 0.5)
+dM6 <- subset(eig.all, phi==0.4 & gamma == 0.6 & jsur == 0.6)
+dM7 <- subset(eig.all, phi==0.4 & gamma == 0.6 & jsur == 0.7)
+dM8 <- subset(eig.all, phi==0.4 & gamma == 0.6 & jsur == 0.8)
+dM9 <- subset(eig.all, phi==0.4 & gamma == 0.6 & jsur == 0.9)
+
+ddd <- rbind(dM1,dM2,dM3,dM4,dM5,dM6,dM7,dM8,dM9)
+
+#Lambda
+pM <- ggplot(ddd, aes(sigma, lam)) + geom_line()
+pM + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y=expression(lambda)) +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+#R0
+pM1 <- ggplot(ddd, aes(sigma, R0)) + geom_line()
+pM1 + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y=expression('R'[0])) +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+#T
+pM2 <- ggplot(ddd, aes(sigma, time)) + geom_line()
+pM2 + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y="T") +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+#dr
+pM4 <- ggplot(ddd, aes(sigma, DampR)) + geom_line()
+pM4 + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y="Damping ratio") +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+
+#Phi = -0.3
+dP1 <- subset(eig.all, phi==-0.3 & gamma == 0.6 & jsur == 0.1)
+dP2 <- subset(eig.all, phi==-0.3 & gamma == 0.6 & jsur == 0.2)
+dP3 <- subset(eig.all, phi==-0.3 & gamma == 0.6 & jsur == 0.3)
+dP4 <- subset(eig.all, phi==-0.3 & gamma == 0.6 & jsur == 0.4)
+dP5 <- subset(eig.all, phi==-0.3 & gamma == 0.6 & jsur == 0.5)
+dP6 <- subset(eig.all, phi==-0.3 & gamma == 0.6 & jsur == 0.6)
+dP7 <- subset(eig.all, phi==-0.3 & gamma == 0.6 & jsur == 0.7)
+dP8 <- subset(eig.all, phi==-0.3 & gamma == 0.6 & jsur == 0.8)
+dP9 <- subset(eig.all, phi==-0.3 & gamma == 0.6 & jsur == 0.9)
+
+dddd <- rbind(dP1,dP2,dP3,dP4,dP5,dP6,dP7,dP8,dP9)
+
+pP <- ggplot(dddd, aes(sigma, lam)) + geom_line()
+pP + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y=expression(lambda)) +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+#R0
+pP1 <- ggplot(dddd, aes(sigma, R0)) + geom_line()
+pP1 + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y=expression('R'[0])) +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+#T
+pP2 <- ggplot(dddd, aes(sigma, time)) + geom_line()
+pP2 + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y="T") +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+#dr
+pP4 <- ggplot(ddd, aes(sigma, DampR)) + geom_line()
+pP4 + facet_grid(jsur~ phi, labeller=label_both) + 
+  labs(x=expression(sigma), y="Damping ratio") +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+
