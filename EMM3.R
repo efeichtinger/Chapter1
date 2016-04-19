@@ -307,28 +307,62 @@ g8 <- matrix(c(0.1,1,0.4,0.7), nrow =2, ncol=2, byrow=TRUE)
 #g = 0.9
 g9 <- matrix(c(0.05,1, 0.45,0.7), nrow =2, ncol=2, byrow=TRUE)
 
-eig1 <- eigen.analysis(g1)
-eig2 <- eigen.analysis(g2)
-eig3 <- eigen.analysis(g3)
-eig4 <- eigen.analysis(g4)
-eig5 <- eigen.analysis(g5)
-eig6 <- eigen.analysis(g6)
-eig7 <- eigen.analysis(g7)
-eig8 <- eigen.analysis(g8)
-eig9 <- eigen.analysis(g9)
+eig1 <- lambda(g1)
+eig2 <- lambda(g2)
+eig3 <- lambda(g3)
+eig4 <- lambda(g4)
+eig5 <- lambda(g5)
+eig6 <- lambda(g6)
+eig7 <- lambda(g7)
+eig8 <- lambda(g8)
+eig9 <- lambda(g9)
+
+lam <- c(eig1,eig2,eig3,eig4,eig5,eig6,eig7,eig8,eig9)
 
 r1 <- net.reproductive.rate(g1)
-r1 <- net.reproductive.rate(g1)
-r1 <- net.reproductive.rate(g1)
-r1 <- net.reproductive.rate(g1)
-r1 <- net.reproductive.rate(g1)
-r1 <- net.reproductive.rate(g1)
-r1 <- net.reproductive.rate(g1)
-r1 <- net.reproductive.rate(g1)
-r1 <- net.reproductive.rate(g1)
+r2 <- net.reproductive.rate(g2)
+r3 <- net.reproductive.rate(g3)
+r4 <- net.reproductive.rate(g4)
+r5 <- net.reproductive.rate(g5)
+r6 <- net.reproductive.rate(g6)
+r7 <- net.reproductive.rate(g7)
+r8 <- net.reproductive.rate(g8)
+r9 <- net.reproductive.rate(g9)
+
+net.rep <- c(r1,r2,r3,r4,r5,r6,r7,r8,r9)
 
 t1 <- generation.time(g1)
+t2 <- generation.time(g2)
+t3 <- generation.time(g3)
+t4 <- generation.time(g4)
+t5 <- generation.time(g5)
+t6 <- generation.time(g6)
+t7 <- generation.time(g7)
+t8 <- generation.time(g8)
+t9 <- generation.time(g9)
 
+time <- c(t1,t2,t3,t4,t5,t6,t7,t8,t9)
+
+df <- data.frame(lam,net.rep,time)
+df["g"] <- c(0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9)
+
+##Plots to see lambda, R0, and T as a function of g in a monotypic population
+library(ggplot2)
+qplot(df$g,df$egs)
+qplot(df$g,df$rs)
+qplot(df$g,df$ts)
+
+plotA <- ggplot(df, aes(g, lam))
+plotA + geom_point(colour = "black", size = 3) + xlim(0.1,0.9) +
+  ylim(0.8,1.2) + labs(x = expression(gamma), y = expression(lambda)) 
+
+plotB <- ggplot(df, aes(g, net.rep))
+plotB + geom_point(colour = "black", size=3) + xlim(0.1,0.9) +
+  ylim(0.3,1.7) + labs(x = expression(gamma), y = expression("R"[0]))
+
+plot.t <- ggplot(df, aes(g, time))
+plot.t + geom_point(colour="black", size=3) + xlim(0.1,0.9) +
+  ylim(4,6.5) + labs(x= expression(gamma), y = expression("T"[1]))
 
 #Figure 6 - mat plot, SSD (NOTE- might want to use just this and not Fig 5)
 #Monotypic populations (this can result from phi = 1, but don't present it this way
