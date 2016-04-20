@@ -806,4 +806,18 @@ pP4 + facet_grid(jsur~ phi, labeller=label_both) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
   theme(axis.title.y = element_text(size = 15, face = 'bold'))
 
+########
+
+#Transient crap
+td <- subset(eig.all, phi==-0.3 & gamma ==0.5 & jsur==0.5)
+plot(td$sigma, td$eigen2, ylim=c(0.45,1))
+
+td2 <- subset(eig.all, phi==0 & gamma ==0.5 & jsur==0.5)
+plot(td2$sigma, td2$eigen2, ylim=c(0.45,1))
+
+td3 <-subset(eig.all, phi==0.5 & gamma ==0.5 & jsur==0.5)
+plot(td3$sigma, td3$eigen2, ylim=c(0.45,1))
+
+td4 <-subset(eig.all, phi==0.9 & gamma==0.5 & jsur ==0.5)
+plot(td4$sigma, td4$eigen2, ylim=c(0.45,1))
 
