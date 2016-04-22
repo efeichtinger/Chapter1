@@ -821,3 +821,15 @@ plot(td3$sigma, td3$eigen2, ylim=c(0.45,1))
 td4 <-subset(eig.all, phi==0.9 & gamma==0.5 & jsur ==0.5)
 plot(td4$sigma, td4$eigen2, ylim=c(0.45,1))
 
+
+
+
+#########################################
+
+
+#Single type model for estimating events in the lifecycle (Caswell)
+#Age at first reproduction
+
+pop <- matrix(c(0.16,1,0.24,0.7), nrow=2, ncol=2, byrow=TRUE)
+splitA(pop, r = 1, c =2)
+
