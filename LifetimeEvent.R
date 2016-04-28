@@ -59,4 +59,39 @@ tc <- (solve(diag(b2))) %*% trans %*% diag(b2)
 expect <- et %*% (solve(iden-tc))
 expect
 
+#### Functions for each step 
+### Need to set up T', M' and I 
+
+#This function is Eq (5.51) in Caswell, all entries all matrices
+#input for m is mprime
+#input for i is identity matrix 
+#input for t is tprime 
+bprime <- function(m,i,t){
+  b <- m %*% (solve(i - t))
+  return(b) 
+}
+
+#This object is the second row of Bprime, it's a row vector or 1 X 4 matrix
+b2prime <- bprime[2,1:2]
+
+
+#Function computes T(c), inputs and output are matrices
+#the input for b is b2prime
+#the input for t is the transition matrix 
+#output is a matrix, the T(c) matrix 
+tc.mat <- function(b,t){
+  tc <- solve(diag(b)) %*% t %*% diag(b)
+  return(tc)
+}
+
+
+#Function computes the mean age at first reprodcuction
+#input at i is the identity matrix 
+#input at e is a column vector of 1's with dim 1 X s 
+#input t is tc.mat 
+mean.age <- function(e,i,t){
+  ma <- (t(e)) %*% solve((i-t))
+  return(ma)
+}
+
 
