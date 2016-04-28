@@ -24,11 +24,45 @@ library(ggplot2)
 library(plot3D)
 library(grid)
 
+#identity matrix 
+iden <- matrix(c(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1), nrow=4, ncol=4,
+               byrow=TRUE)
+
+#column vector with 1's 
+ecol <- matrix(c(1,1,1,1), nrow=4, ncol=1)
+
 #function for estimating Bienvenus's T
 Bien.T <- function(L, v, w, r){
   time <- L * drop(v%*%w)/(drop(v%*%r%*%w))
   return(time)
 }
+
+#Function is Eq (5.51) in Caswell, all inputs are matrices
+#input for m is mprime, input for i is identity matrix, input for t is tprime 
+bprime <- function(m,i,t){
+  b <- m %*% (solve(i - t))
+  return(b) 
+}
+
+#This object is the second row of Bprime, it's a row vector or 1 X 4 matrix
+b2prime <- bprime[2,1:4]
+
+#Function computes T(c), inputs and output are matrices
+#the input for b is b2prime, for t it's the transition matrix
+#output is a matrix, the T(c) matrix 
+tc.mat <- function(b,t){
+  tc <- solve(diag(b)) %*% t %*% diag(b)
+  return(tc)
+}
+
+#Function computes the mean age at first reprodcuction
+#input at i is the identity matrix 
+#input at e is ecol the column vector, t is tc.mat   
+mean.age <- function(e,i,t){
+  ma <- (t(e)) %*% solve((i-t))
+  return(ma)
+}
+
 
 #Fix P and F
 P <- 0.7
@@ -60,8 +94,8 @@ ii <- 0
 #Simulation 
 
 gb <- 0.01 * (1:99)
-S <- 0
-for (h in 10:11){
+S <- 6
+for (h in 8:8){
   S <- (h - 2) * 0.1
   phi <- 0
   for (k in 0:20){
@@ -91,6 +125,7 @@ for (h in 10:11){
         #
         split.mat <- splitA(A, r = c(1,3), c = c(2,4))
         fert.mat <- split.mat$F
+        t.mat <- split.mat$T
         ssd <- eigen(A)$vectors[,1]/sum(eigen(A)$vectors[,1])
         rvv <- (eigen(t(A))$vectors[,1]/eigen(t(A))$vectors[1,1])
         bienvenu <- Bien.T(eig[ii], rvv, ssd, fert.mat)
