@@ -94,4 +94,29 @@ mean.age <- function(e,i,t){
   return(ma)
 }
 
+########
+# What if I did the 2 type? See what happens
+#s=0.4, g = 0.6, P = 0.7, F = 1, sigma = 0.05, phi = 0
 
+pop.mat <- matrix(c(0.18,1,0,0,0.22,0.7,0,0,0,0,0.14,1,0,0,0.26,0.7),
+                  nrow = 4, ncol=4, byrow=TRUE)
+
+colnames(pop.mat) <- c("slow juvenile","slow adult", "fast juvenile","fast adult")
+rownames(pop.mat) <- c("slow juvenile","slow adult", "fast juvenile","fast adult")
+
+#splitA
+spA2 <- splitA(pop.mat, r = c(1,3), c = c(2,4))
+trans2 <- spA2$T
+iden2 <- matrix(c(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1), nrow=4, ncol=4, byrow=TRUE)
+
+Tprime2 <- matrix(c(0.18,0,0,0,0.22,0,0,0,0,0,0.14,0,0,0,0.26,0),
+                  nrow=4, ncol=4, byrow=TRUE)
+Mprime2 <- matrix(c(0.6,0,0.6,0,0,1,0,1), nrow=2, ncol=4, byrow=TRUE)
+
+Bprime2 <- Mprime2 %*% (solve(iden2-Tprime2))
+b2.2 <- Bprime2[2,1:4]
+
+e2 <- matrix(c(1,1,1,1),nrow=4,ncol=1)
+
+tc2 <- solve(diag(b2.2)) %*% trans2 %*% diag(b2.2)
+expect2 <- (t(e2)) %*% (solve(iden2 - tc2))
