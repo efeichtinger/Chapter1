@@ -2,9 +2,9 @@
 title: "Mean age of first reproduction"
 author: "Erin Feichtinger"
 date: "Friday, April 29, 2016"
-output: html_document
+output: pdf_document
 ---
-
+# Lifetime event
 
 From Bruce's comments on the manuscript regarding the residences times of individuals in each stage from the fundamental matrix comes this...
 
@@ -14,8 +14,12 @@ I followed Caswell in Chapter 5 by first decomposing the life cycle and understa
 
 I wrote functions for each step in the process. I used the orca whale data to test the functions and I get the same answer as Caswell in each step and the estimate for the mean age of first reproduction for orcas. Then, I arbitrarily chose values for each parameter in the growth model (single type) to see what number I get. Then, I repeated the process for the two type model. 
 
+I think I have the correct elements in the T' and M' matrices. I'm confused on one detail, however. $$t_{i,j}$$ is an element of T (original transition matrix) and it is the probability that an individual in stage j at time t is alive and in stage i and time t + 1. As I understand it, this would be sg. 
+
+
 ```{r, echo=FALSE}
 library(popbio)
+library(ggplot2)
 ### Single type growth model
 ### Finding the age at first reproduction 
 
@@ -48,76 +52,59 @@ expect
 
 ```
 
-The answer for this particular combination of parameter values is an expected age of first reproduction of 1.462 years for a single type model. Now, I did the same thing for a two type model where sigma = 0.05 (and represents a standard deviation) and phi = 0. 
+The expected age of first reproduction in this example is 1.46. However, this is with no variation in growth and one phenotype only. I added the steps to find expected age of first reproduction to the simulation (2 types with sigma as a standard deviation). The average age at first reproduction is higher, 2. something for both phenoytpes. Not sure why, not sure it matters...?
+
+Anyway, I was successful in adding the additional steps to the simulation and collecting the output of interest, the mean age of first reproduction for each phenotype. I checked the set up of T' and M' several times so I'm fairly confident that I placed the elements in the correct place within the matrices. 
+
+I only ran the program with one value of juvenile survival so I could save time and make sure the program worked. It takes about 15 minutes to go through the simulation with one value of S. Each additional value adds 15-20 minutes. 4 values of S takes about an hour. Now that I know it works, I can re-run the program with more values of S (although none of the other results depended very strongly on S). 
+
+I used S = 0.6 for the test run. The expected age at first reproduction is around 2 for both phenotypes with the expected age lower for the fast phenotype although the magnitude of difference is small. Another thing to note is that the expectation is the same when sigma  = 0 (which should happen I would think!) Thus, the range of values for both phenotypes is the same. 
+
+* Range 2.031250 to 2.463782
+* Mean of the expected age
+    + slow = 2.130505, SD = 0.115
+    + fast = 2.107819, SD = 0.057
+
+I think this makes sense but a discussion is needed. 
+
+By making simple plots of sigma and the expected age, my first thoughts on the interpretation is that as sigma increasess, the age at first reproduction increases for the slow phenotype. However, for the fast phenotype, as sigma increases the mean age decreases. Additionally, there is less variation in this quantity for the fast phenotype than the slow. 
 
 
-```{r, echo = FALSE}
-# What if I did the 2 type? See what happens
-#s=0.4, g = 0.6, P = 0.7, F = 1, sigma = 0.05, phi = 0
+```{r, echo=FALSE}
+new.data <- read.csv("data.set.csv", header=TRUE)
 
-pop.mat <- matrix(c(0.18,1,0,0,0.22,0.7,0,0,0,0,0.14,1,0,0,0.26,0.7),
-                  nrow = 4, ncol=4, byrow=TRUE)
+#Subset for graphing
+d1 <- subset(new.data, pc == -0.3 & gbar == 0.1)
+d2 <- subset(new.data, pc == -0.3 & gbar == 0.3)
+d3 <- subset(new.data, pc == -0.3 & gbar == 0.5)
+d4 <- subset(new.data, pc == -0.3 & gbar == 0.7)
+d5 <- subset(new.data, pc == -0.3 & gbar == 0.9)
+d6 <- subset(new.data, pc == 0 & gbar == 0.1)
+d7 <- subset(new.data, pc == 0 & gbar == 0.3)
+d8 <- subset(new.data, pc == 0 & gbar == 0.5)
+d9 <- subset(new.data, pc == 0 & gbar == 0.7)
+d10 <- subset(new.data, pc == 0 & gbar == 0.9)
+d11 <- subset(new.data, pc == 0.5 & gbar == 0.1)
+d12 <- subset(new.data, pc == 0.5 & gbar == 0.3)
+d13 <- subset(new.data, pc == 0.5 & gbar == 0.5)
+d14 <- subset(new.data, pc == 0.5 & gbar == 0.7)
+d15 <- subset(new.data, pc == 0.5 & gbar == 0.9)
+d16 <- subset(new.data, pc == 1 & gbar == 0.1)
+d17 <- subset(new.data, pc == 1 & gbar == 0.3)
+d18 <- subset(new.data, pc == 1 & gbar == 0.5)
+d19 <- subset(new.data, pc == 1 & gbar == 0.7)
+d20 <- subset(new.data, pc == 1 & gbar == 0.9)
 
-colnames(pop.mat) <- c("slow juvenile","slow adult", "fast juvenile","fast adult")
-rownames(pop.mat) <- c("slow juvenile","slow adult", "fast juvenile","fast adult")
+dat.all <- rbind(d1,d2,d3,d4,d5,d6,d7,d8,d9,d10,d11,d12,d13,d14,d15,d16,d17,
+          d18,d19,d20)
+p <- ggplot(dat.all, aes(sigma, ages)) + geom_line()
+p + facet_grid(gbar ~ pc, labeller=label_both) +
+  labs(x=expression(sigma), y="Age - Slow")
 
-#splitA
-spA2 <- splitA(pop.mat, r = c(1,3), c = c(2,4))
-trans2 <- spA2$T
-iden2 <- matrix(c(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1), nrow=4, ncol=4, byrow=TRUE)
-
-Tprime2 <- matrix(c(0.18,0,0,0,0.22,0,0,0,0,0,0.14,0,0,0,0.26,0),
-                  nrow=4, ncol=4, byrow=TRUE)
-Mprime2 <- matrix(c(0.6,0,0.6,0,0,1,0,1), nrow=2, ncol=4, byrow=TRUE)
-
-Bprime2 <- Mprime2 %*% (solve(iden2-Tprime2))
-b2.2 <- Bprime2[2,1:4]
-
-e2 <- matrix(c(1,1,1,1),nrow=4,ncol=1)
-
-tc2 <- solve(diag(b2.2)) %*% trans2 %*% diag(b2.2)
-expect2 <- (t(e2)) %*% (solve(iden2 - tc2))
-expect2
+p1 <- ggplot(dat.all, aes(sigma, agef)) + geom_line()
+p1 + facet_grid(gbar ~ pc, labeller=label_both) +
+  labs(x=expression(sigma), y="Age - Fast") 
 ```
 
-I'm not sure that is correct because the slow phenotype has a lower age at first reproduction (although the differnce is not large). It's close to the value for the single type model, around 1.5 years to maturity. 
-
-I wrote the functions for adding into the simulation. That's easy enough. However, the hard part is to make sure all of the correct elements go into T', M' and B'. 
-
-### Functions
-
-```{r}
-#This function is Eq (5.51) in Caswell, all entries all matrices
-#input for m is mprime
-#input for i is identity matrix 
-#input for t is tprime 
-bprime <- function(m,i,t){
-  b <- m %*% (solve(i - t))
-  return(b) 
-}
-
-#This object is the second row of Bprime, it's a row vector or 1 X 4 matrix
-#b2prime <- bprime[2,1:2]
-
-
-#Function computes T(c), inputs and output are matrices
-#the input for b is b2prime
-#the input for t is the transition matrix 
-#output is a matrix, the T(c) matrix 
-tc.mat <- function(b,t){
-  tc <- solve(diag(b)) %*% t %*% diag(b)
-  return(tc)
-}
-
-
-#Function computes the mean age at first reprodcuction
-#input at i is the identity matrix 
-#input at e is a column vector of 1's with dim 1 X s 
-#input t is tc.mat 
-mean.age <- function(e,i,t){
-  ma <- (t(e)) %*% solve((i-t))
-  return(ma)
-}
-
-```
+Results don't appear to be dependent on phi, looks like g and sigma are key here. I don't know what to think of this. 
 
