@@ -21,13 +21,67 @@ tc[4,3] <-0
 identity <- matrix(c(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1),nrow=4,ncol=4,byrow=TRUE)
 
 e <- matrix(c(1,1,1,1),nrow=4,ncol=1)
-et <- t(e)
 
-expect <- et %*% (solve(identity-tc))
+
+expect <- (t(e)) %*% (solve(identity-tc))
 ####IT WORKS! Finally!!!
 
+#Identity matrix for later use
+I <- matrix(c(1,0,0,1), nrow=2, ncol=2, byrow=TRUE)
 
+#2 type (fast and slow)
+I2 <- matrix(c(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1),
+      nrow = 4, ncol = 4, byrow=TRUE)
 
+#transition matrix for single type model 
+trans <- matrix(ncol=2, nrow=2, byrow=TRUE,
+          data = c(S*(1-gbar), 0, S*gbar, P))
+
+#transition matrix for 2 type model
+trans2 <-matrix(ncol=4, nrow=4, byrow=TRUE, data=c(
+       S*(1-(gbar-sigma)), 0, 0, 0,
+        S * (gbar-sigma), P, 0, 0,
+       0, 0, S*(1 - (gbar + sigma)), 0,
+       0, 0, S * (gbar + sigma), P))
+
+#Part of new transition matrix P' - Eq 5.47 Caswell, pg 124
+Tprime <- matrix(ncol=2, nrow=2, byrow=TRUE, 
+          data = c(S*(1-gbar), 0, S*gbar, 0))
+
+#Two type model
+Tprime2 <- matrix(ncol=4, nrow=4, byrow=TRUE, data = c(
+  S*(1-(gbar-sigma)), 0, 0, 0,
+  S*(gbar-sigma), 0, 0, 0, 0,
+  0, 0, S*(1-(gabr + sigma)), 0,
+  0, 0, S*(gbar + sigma), 0))
+
+#Part of P'
+Mprime <- matrix(ncol=2, nrow=2, byrow=TRUE,
+          data = c(1-S, 0, 0, 1))
+
+#Two type model 
+Mprime2 <- matrix(ncol=4, nrow=2, byrow=TRUE, 
+          data = c(1-S, 0, 1-S, 0,
+                   0, 1, 0, 1))
+
+#Find B' and extract the second row  - probabilities of reproducing before death
+Bprime <- Mprime %*% (solve(I - Tprime))
+b2 <- Bprime[2,1:2]
+
+#b2 two type
+b2 <- Bprime2[2,1:4]
+
+#New Markov Chain conditional on absorption in "reproduced before dying"
+Tc <- (solve(diag(b2))) %*% trans %*% diag(b2)
+
+#define e - a column vector of 1's
+e <- matrix(c(1,1),nrow=2,ncol=1)
+
+#2 type mode
+e <- matrix(c(1,1,1,1), nrow = 1, ncol = 4)
+
+mean.age <- t(e) %*% (solve(I - Tc))
+  
 ### Single type growth model
 ### Finding the age at first reproduction 
 
@@ -120,3 +174,7 @@ e2 <- matrix(c(1,1,1,1),nrow=4,ncol=1)
 
 tc2 <- solve(diag(b2.2)) %*% trans2 %*% diag(b2.2)
 expect2 <- (t(e2)) %*% (solve(iden2 - tc2))
+
+
+
+
