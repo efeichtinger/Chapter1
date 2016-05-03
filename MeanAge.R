@@ -40,8 +40,6 @@ B.prime <- function(m,i,t){
   return(b) 
 }
 
-#This object is the second row of Bprime, it's a row vector or 1 X 4 matrix
-b2<- bprime[2,1:4]
 
 #Function computes T(c), inputs and output are matrices
 #the input for b is b2
