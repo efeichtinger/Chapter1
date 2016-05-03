@@ -13,6 +13,7 @@
 rm(list = ls())
 
 library(popbio)
+library(ggplot2)
 
 #Define Identity matrix for use in finding mean age at 1st reproduction
 I <- matrix(c(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1),
@@ -32,9 +33,9 @@ Bien.T <- function(L, v, w, r){
 
 
 #This function is Eq (5.51) in Caswell, all entries all matrices
-#input for m is mprime
-#input for i is identity matrix 
-#input for t is tprime 
+#input for m is M' - Caswell Eq. 5.55
+#input for i is Identity matrix 
+#input for t is T' - Caswell Eq. 5.55
 B.prime <- function(m,i,t){
   b <- m %*% (solve(i - t))
   return(b) 
@@ -58,6 +59,11 @@ mean.age <- function(e,i,t){
   ma <- ((t(e)) %*% (solve(i-t)))
   return(ma)
 }
+
+#####################################################
+
+# Simulation 
+# May 2016
 
 #Fix P and F
 P <- 0.7
@@ -84,8 +90,8 @@ ii <- 0
 #Simulation 
 
 gb <- 0.01 * (1:99)
-S <- 6
-for (h in 8:8){
+S <- 5
+for (h in 6:6){
   S <- (h - 2) * 0.1
   phi <- 0
   for (k in 0:20){
@@ -133,6 +139,7 @@ for (h in 8:8){
         B <- B.prime(Mp, I, tr)
         b2 <- B[2,1:4]
         Tc <- tc.mat(b2,tr)
+        Tc[2,2] <- 0
         age <- mean.age(e, I, Tc)
         #the output of age is a row vector, I want the 1st and 3rd entries 
         #in different objects so it can collect 
