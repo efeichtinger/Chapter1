@@ -100,18 +100,22 @@ iden <- matrix(c(1,0,0,1), nrow=2, ncol=2, byrow=TRUE)
 
 Tprime <- matrix(c(0.16,0,0.24,0), nrow=2, ncol=2, byrow=TRUE)
 Mprime <- matrix(c(0.6,0,0,1), nrow=2, ncol=2, byrow=TRUE)
-Pprime <- matrix(c(0.16,0,0,0,0.24,0,0,0,0.6,0,1,0,0,1,0,1), nrow=4, ncol=4,
-                 byrow=TRUE)
 
-Bprime <- Mprime %*% (solve(iden-Tprime))
-b2 <- Bprime[2,1:2]
+
+B.prime <- function(m,i,t){
+  b <- m %*% (solve(i - t))
+  return(b) 
+}
+
+
+B <- B.prime(Mprime,iden,Tprime)
+b <- B[2,1:2]
 
 e <- matrix(c(1,1),nrow=2,ncol=1)
-et <- t(e)
+Tc <- tc.mat(b,trans)
+Tc[2,2] <-0
 
-tc <- (solve(diag(b2))) %*% trans %*% diag(b2)
-expect <- et %*% (solve(iden-tc))
-expect
+age <- mean.age(e,iden,Tc)
 
 #### Functions for each step 
 ### Need to set up T', M' and I 
@@ -175,6 +179,38 @@ e2 <- matrix(c(1,1,1,1),nrow=4,ncol=1)
 tc2 <- solve(diag(b2.2)) %*% trans2 %*% diag(b2.2)
 expect2 <- (t(e2)) %*% (solve(iden2 - tc2))
 
+
+#### Using the whale data to debug, something is wrong in one of the functions
+# Test functions with orca data
+data(whale)
+decomp <-  splitA(whale, r = 1, c = c(2,3))
+# Transition matrix
+tran <- decomp$T
+# Identity matrix
+I <- matrix(c(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1), nrow=4, ncol=4, byrow=TRUE)
+# M' in Caswell
+m.p <- matrix(c(0.0225,0.0153,0,0.0196, 0,0,1,0), nrow=2, ncol=4, byrow=TRUE)
+# T' in Caswel
+t.p <- matrix(c(0,0,0,0,0.9775,0.9111,0,0,0,0.0736,0,0,0,0,0,0.9804),
+              nrow=4, ncol=4, byrow=TRUE)
+
+### everthing above is the correct input
+
+# Eq 5.51 in Caswell, B' - the probability of absorption in reprod before death
+B <- B.prime(m.p,I,t.p)
+b2 <- B[2,1:4]
+b2[b2==0] <-1
+
+tc <- tc.mat(b2,tran)
+e <- matrix(c(1,1,1,1), nrow=4, ncol=1)
+eT <- t(e)
+
+#### Must zero out the other entries in Tc otherwise it won't be correct 
+tc[3,3] <-0
+tc[4,4] <-0
+tc[4,3] <-0
+
+age <- mean.age(e,I,tc)
 
 
 
