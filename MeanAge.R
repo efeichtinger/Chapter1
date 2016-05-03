@@ -154,9 +154,21 @@ for (h in 6:6){
 
 eig.dat <- data.frame(gbar = gbr, js = jsur, sigma = sig, eigen = eig, eigen2 = eig2, pc = poc, instr = r, R0 = nrepd, damp = dpr, time = genT, ages =MES, agef =MEF)
 
-#new.data <- write.csv(eig.dat, file= "data.set.csv")
+new.data <- write.csv(eig.dat, file= "May3.csv")
 
-new.data <- read.csv("data.set.csv", header=TRUE)
+new.data <- read.csv("May3.csv", header=TRUE)
+new.data[is.na(new.data)] <- 0
+
+
+range(new.data$ages)
+range(new.data$agef)
+mean(new.data$ages)
+mean(new.data$agef)
+sd(new.data$ages)
+sd(new.data$agef)
+
+
+
 
 #Subset for graphing
 d1 <- subset(new.data, pc == -0.3 & gbar == 0.1)
@@ -183,8 +195,33 @@ d20 <- subset(new.data, pc == 1 & gbar == 0.9)
 dat.all <- rbind(d1,d2,d3,d4,d5,d6,d7,d8,d9,d10,d11,d12,d13,d14,d15,d16,d17,
           d18,d19,d20)
 
-p <- ggplot(dat.all, aes(sigma, agef)) + geom_line()
-p + facet_grid(gbar ~ pc, labeller=label_parsed) +
-  labs(x=expression(sigma), y="age") 
+#Label function -  taken from stackoverflow
+#http://stackoverflow.com/questions/14181234/facet-labels-involving-a-greek-symbol
+my.label <- function (expr1 = gamma == .(x), expr2 = phi == .(x)) 
+{
+  quoted1<- substitute(expr1)
+  quoted2 <- substitute(expr2)
+  function(variable, value) {
+    value <- as.character(value)
+    if(variable == 'gamma')
+      lapply(value, function(x)
+        eval(substitute(bquote(expr1, list(x = x)),list(expr1 = quoted1))))
+    else
+      lapply(value, function(x) 
+        eval(substitute(bquote(expr2, list(x = x)),list(expr2 = quoted2))))
+  }
+}
+
+
+#facet grid 
+p1 <- ggplot(dat.all, aes(sigma, agef)) + geom_line()
+p1 + facet_grid(gbar ~ pc, labeller=my.label()) +
+  labs(x=expression(sigma), y="Exp Age 1st Reprod - Fast") 
+
+p2 <- ggplot(dat.all, aes(sigma, ages)) + geom_line()
+p2 + facet_grid(gbar ~ pc, labeller=my.label()) +
+  labs(x=expression(sigma), y="Exp Age 1st Reprod - Slow") 
+
+
 
         
