@@ -15,10 +15,12 @@ rm(list = ls())
 library(popbio)
 library(ggplot2)
 
-#Define Identity matrix for use in finding mean age at 1st reproduction
+# 5/10 Change to a function so the dimensions can be changed
+# Define Identity matrix for use in finding mean age at 1st reproduction
 I <- matrix(c(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1),
              nrow = 4, ncol = 4, byrow=TRUE)
 
+# 5/10 Change to a function so the dimensions can be changed
 #Define column vector for use in finding mean age at 1st reproduction
 e <- matrix(c(1,1,1,1), nrow = 4, ncol = 1)
 
@@ -90,8 +92,8 @@ ii <- 0
 #Simulation 
 
 gb <- 0.01 * (1:99)
-S <- 5
-for (h in 6:6){
+S <- 6
+for (h in 7:8){
   S <- (h - 2) * 0.1
   phi <- 0
   for (k in 0:20){
@@ -152,11 +154,19 @@ for (h in 6:6){
 }
 
 eig.dat <- data.frame(gbar = gbr, js = jsur, sigma = sig, eigen = eig, eigen2 = eig2, pc = poc, instr = r, R0 = nrepd, damp = dpr, time = genT, ages =MES, agef =MEF)
+names(eig.dat) <- c("gbar", "jsur", "sigma", "lam","eigen2", "phi", "r", "R0","DampR", "time", "magef", "mages")
 
-new.data <- write.csv(eig.dat, file= "May3b.csv")
+sum(is.na(eig.dat$ages))
 
-new.data <- read.csv("May3b.csv", header=TRUE)
 
+# May 3 2016, S = 0.4 
+#new.data <- write.csv(eig.dat, file= "May3b.csv")
+#new.data <- read.csv("May3b.csv", header=TRUE)
+
+# May 10 2016, S = 0.5 & 0.6 
+df.May10 <- write.csv(eig.dat, file = "May10.csv")
+# Keep name so I don't have to re-write everything below
+new.data <- read.csv("May10.csv", header = TRUE)
 
 range(new.data$ages)
 range(new.data$agef)
@@ -166,9 +176,7 @@ sd(new.data$ages)
 sd(new.data$agef)
 
 
-
-
-#Subset for graphing
+#Subset for graphing  - values for Phi (pc) and gbar match other figures
 d1 <- subset(new.data, pc == -0.3 & gbar == 0.1)
 d2 <- subset(new.data, pc == -0.3 & gbar == 0.3)
 d3 <- subset(new.data, pc == -0.3 & gbar == 0.5)
@@ -210,7 +218,7 @@ my.label <- function (expr1 = gamma == .(x), expr2 = phi == .(x))
   }
 }
 
-
+# Phi doesn't matter so adjust figures to remove phi
 #facet grid 
 p1 <- ggplot(dat.all, aes(sigma, agef)) + geom_line()
 p1 + facet_grid(gbar ~ pc, labeller=my.label()) +
@@ -220,6 +228,36 @@ p2 <- ggplot(dat.all, aes(sigma, ages)) + geom_line()
 p2 + facet_grid(gbar ~ pc, labeller=my.label()) +
   labs(x=expression(sigma), y="Exp Age 1st Reprod - Slow") 
 
+# figure - y = mean age, x = sigma, z = g
+p <- ggplot(dat.all, aes(sigma, ages, color = ages)) + 
+  geom_point(aes(y=ages, col = "Age slow")) +
+  geom_point(aes(y = agef, col = "Age fast"))
+# With one variable
+p + facet_grid(. ~ gbar) +
+  labs(x=expression(sigma), y = "Mean Age at 1st Reproduction")
+  #add layer for fast mean age
+ 
+# How to get the fast and slow types next to each other 
+p <- ggplot(dat.all, aes(sigma, ages)) + geom_point()
+p + facet_grid()
+  
+p1 + facet_grid(gbar ~ pc, labeller=my.label()) +
+  labs(x=expression(sigma), y="Exp Age 1st Reprod - Fast") 
 
+# Mean age at first reproduction of fast and slow
+# Use a few different values of S, stage 1 survival probability 
 
-        
+mean.f <- mean(new.data$agef)
+mean.s <-mean(new.data$ages)
+
+std.s <- sd(new.data$ages)
+std.f <- sd(new.data$agef)     
+
+## example barplot/column graph? in ggplot2
+p1<-ggplot(mtc,aes(x=factor(gear),y=wt,fill=factor(vs)), color=factor(vs)) +  
+  stat_summary(fun.y=mean,position=position_dodge(),geom="bar")
+## example from internet
+library(plyr)
+mp <- ggplot(ddply(new.data, .(agef), mean), aes(x=factor(age), y=factor(score))) + 
+  geom_bar()
+
