@@ -5,7 +5,7 @@ library(popbio)
 data(whale)
 whale
 generation.time(whale)
-fundamental.matrix(whale, r =1, c = c(2,3))
+fundamental.matrix(whale, r = 1, c = c(2,3))
 
 b <- c(0.8093,0.8279,1,1)
 tran <- matrix(c(0,0,0,0,0.9775,0.911,0,0,0,0.0736,0.9534,0,0,0,0.0452,0.9804),
@@ -167,7 +167,7 @@ spA2 <- splitA(pop.mat, r = c(1,3), c = c(2,4))
 trans2 <- spA2$T
 iden2 <- matrix(c(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1), nrow=4, ncol=4, byrow=TRUE)
 
-Tprime2 <- matrix(c(0.18,0,0,0,0.22,0,0,0,0,0,0.14,0,0,0,0.26,0),
+Tprime2 <- matrix(c(0.18,0,0,0,0,0,0,0,0,0,0.14,0,0,0,0,0),
                   nrow=4, ncol=4, byrow=TRUE)
 Mprime2 <- matrix(c(0.6,0,0.6,0,0,1,0,1), nrow=2, ncol=4, byrow=TRUE)
 
@@ -177,6 +177,7 @@ b2.2 <- Bprime2[2,1:4]
 e2 <- matrix(c(1,1,1,1),nrow=4,ncol=1)
 
 tc2 <- solve(diag(b2.2)) %*% trans2 %*% diag(b2.2)
+tc2[1:4,3:4] <- 1
 expect2 <- (t(e2)) %*% (solve(iden2 - tc2))
 
 
@@ -201,7 +202,10 @@ B <- B.prime(m.p,I,t.p)
 b2 <- B[2,1:4]
 b2[b2==0] <-1
 
-tc <- tc.mat(b2,tran)
+solve(diag(b2)) %*% t.p %*% diag(b2)
+
+
+tc <- tc.mat(b2,t.p)
 e <- matrix(c(1,1,1,1), nrow=4, ncol=1)
 eT <- t(e)
 
