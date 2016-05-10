@@ -116,9 +116,9 @@ for (h in 6:6){
         
         Tp <- matrix(ncol=4, nrow=4, byrow=TRUE, data = c(
           S*(1-(gbar-sigma)), 0, 0, 0,
-          S*(gbar-sigma), 0, 0, 0,
+          S*gbar, 0, 0, 0,
           0, 0, S*(1-(gbar + sigma)), 0,
-          0, 0, S*(gbar + sigma), 0))
+          0, 0, S*gbar, 0))
         
         Mp <- matrix(ncol=4, nrow=2, byrow=TRUE, 
                           data = c(1-S, 0, 1-S, 0,
@@ -136,10 +136,9 @@ for (h in 6:6){
         dpr[ii] <- damping.ratio(A)
         poc[ii] <- phi
         #
-        B <- B.prime(Mp, I, tr)
+        B <- B.prime(Mp, I, Tp)
         b2 <- B[2,1:4]
-        Tc <- tc.mat(b2,tr)
-        Tc[2,2] <- 0
+        Tc <- tc.mat(b2, Tp)
         age <- mean.age(e, I, Tc)
         #the output of age is a row vector, I want the 1st and 3rd entries 
         #in different objects so it can collect 
@@ -154,10 +153,9 @@ for (h in 6:6){
 
 eig.dat <- data.frame(gbar = gbr, js = jsur, sigma = sig, eigen = eig, eigen2 = eig2, pc = poc, instr = r, R0 = nrepd, damp = dpr, time = genT, ages =MES, agef =MEF)
 
-new.data <- write.csv(eig.dat, file= "May3.csv")
+new.data <- write.csv(eig.dat, file= "May3b.csv")
 
-new.data <- read.csv("May3.csv", header=TRUE)
-new.data[is.na(new.data)] <- 0
+new.data <- read.csv("May3b.csv", header=TRUE)
 
 
 range(new.data$ages)
