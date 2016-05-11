@@ -17,12 +17,30 @@ library(ggplot2)
 
 # 5/10 Change to a function so the dimensions can be changed
 # Define Identity matrix for use in finding mean age at 1st reproduction
+# hard code
 I <- matrix(c(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1),
              nrow = 4, ncol = 4, byrow=TRUE)
 
+# Function for flexibility 
+I <- function(dmns){
+  i <- diag(1, dmns)
+  return(i)
+}
+
+
 # 5/10 Change to a function so the dimensions can be changed
-#Define column vector for use in finding mean age at 1st reproduction
+# Define column vector for use in finding mean age at 1st reproduction
+# Hard code
 e <- matrix(c(1,1,1,1), nrow = 4, ncol = 1)
+
+# function for e flexibility in size 
+# e is a column vector with dimensions the number of stages in model
+# input of dmns is numeric
+# output a column vector 
+e <- function(dmns){
+  ev <- matrix(rep(1,dmns,nrow=dmns,ncol=1))
+  return(ev)
+}
 
 
 ### Functions
