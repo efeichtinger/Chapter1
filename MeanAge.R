@@ -14,32 +14,31 @@ rm(list = ls())
 
 library(popbio)
 library(ggplot2)
+library(plyr)
 
+
+##########################################
 # 5/10 Change to a function so the dimensions can be changed
 # Define Identity matrix for use in finding mean age at 1st reproduction
 # hard code
-I <- matrix(c(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1),
-             nrow = 4, ncol = 4, byrow=TRUE)
+#I <- matrix(c(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1),
+             #nrow = 4, ncol = 4, byrow=TRUE)
 
 # Function for flexibility 
-I <- function(dmns){
+Idmat <- function(dmns){
   i <- diag(1, dmns)
   return(i)
 }
 
-
-# 5/10 Change to a function so the dimensions can be changed
-# Define column vector for use in finding mean age at 1st reproduction
-# Hard code
-e <- matrix(c(1,1,1,1), nrow = 4, ncol = 1)
+#e <- matrix(c(1,1,1,1), nrow = 4, ncol = 1)
 
 # function for e flexibility in size 
 # e is a column vector with dimensions the number of stages in model
 # input of dmns is numeric
 # output a column vector 
-e <- function(dmns){
-  ev <- matrix(rep(1,dmns,nrow=dmns,ncol=1))
-  return(ev)
+evec <- function(dmns){
+  e <- matrix(rep(1,dmns,nrow=dmns,ncol=1))
+  return(e)
 }
 
 
@@ -88,6 +87,9 @@ mean.age <- function(e,i,t){
 #Fix P and F
 P <- 0.7
 F <- 1
+
+I <- Idmat(4)
+e <- evec(4)
 
 #create vectors to store output
 gb <- vector()
@@ -172,56 +174,154 @@ for (h in 7:8){
 }
 
 eig.dat <- data.frame(gbar = gbr, js = jsur, sigma = sig, eigen = eig, eigen2 = eig2, pc = poc, instr = r, R0 = nrepd, damp = dpr, time = genT, ages =MES, agef =MEF)
-names(eig.dat) <- c("gbar", "jsur", "sigma", "lam","eigen2", "phi", "r", "R0","DampR", "time", "magef", "mages")
+names(eig.dat) <- c("gbar", "jsur", "sigma", "lam","eigen2", "phi", "r", "R0","DampR", "time", "mages", "magef")
 
-sum(is.na(eig.dat$ages))
-
-
+##################################
+#Mean of the means across all parameter values (phi doesn't matter here)
 # May 3 2016, S = 0.4 
 #new.data <- write.csv(eig.dat, file= "May3b.csv")
-#new.data <- read.csv("May3b.csv", header=TRUE)
+new.data <- read.csv("May3b.csv", header=TRUE)
+names(new.data) <- c("X", "gbar","jsur","sigma","lam","eigen2","phi",
+            "r","R0","damp","time","ages","agef")
 
 # May 10 2016, S = 0.5 & 0.6 
-df.May10 <- write.csv(eig.dat, file = "May10.csv")
-# Keep name so I don't have to re-write everything below
-new.data <- read.csv("May10.csv", header = TRUE)
+data.56 <- read.csv("May10.csv", header = TRUE)
+names(data.56) <- c("X", "gbar","jsur","sigma","lam","eigen2","phi",
+                    "r","R0","damp","time","ages","agef")
 
-range(new.data$ages)
-range(new.data$agef)
-mean(new.data$ages)
-mean(new.data$agef)
-sd(new.data$ages)
-sd(new.data$agef)
+d41 <- subset(new.data, gbar == 0.1, select = gbar:agef)
+d42 <- subset(new.data, gbar == 0.3, select = gbar:agef)
+d43 <- subset(new.data, gbar == 0.5, select = gbar:agef)
+d44 <- subset(new.data, gbar == 0.7, select = gbar:agef)
+d45 <- subset(new.data, gbar == 0.9, select = gbar:agef)
 
+
+d51 <- subset(data.56, gbar == 0.1 & jsur == 0.5, select = gbar:agef)
+d52 <- subset(data.56, gbar == 0.3 & jsur == 0.5, select = gbar:agef)
+d53 <- subset(data.56, gbar == 0.5 & jsur == 0.5, select = gbar:agef)
+d54 <- subset(data.56, gbar == 0.7 & jsur == 0.5, select = gbar:agef)
+d55 <- subset(data.56, gbar == 0.9 & jsur == 0.5, select = gbar:agef)
+
+#d5all <- rbind(d51,d52,d53,d54,d55)
+
+d61 <- subset(data.56, gbar == 0.1 & jsur == 0.6, select = gbar:agef)
+d62 <- subset(data.56, gbar == 0.3 & jsur == 0.6, select = gbar:agef)
+d63 <- subset(data.56, gbar == 0.5 & jsur == 0.6, select = gbar:agef)
+d64 <- subset(data.56, gbar == 0.7 & jsur == 0.6, select = gbar:agef)
+d65 <- subset(data.56, gbar == 0.9 & jsur == 0.6, select = gbar:agef)
+
+#d6all <- rbind(d61,d62,d63,d64,d65)
+
+dall <- rbind(d41,d42,d43,d44,d45,d51,d52,d53,d54,d55,d61,d62,d63,d64,d65)
+
+#S = 0.5
+px <- ggplot(dall, aes(x=sigma, y=ages)) + geom_line()
+px + facet_grid(jsur~gbar, labeller = label_both) +
+  geom_line(data=dall, aes(x=sigma, y=agef)) +
+  labs(x=expression(sigma), y="Mean Age at 1st Reproduction")
+
+
+
+####################################################
+
+#subset by S 
+sur5 <- subset(data.56, jsur == 0.5)
+sur6 <- subset(data.56, jsur == 0.6)
+
+# S = 0.5
+mins5 <- min(sur5$mages)
+minf5 <- min(sur5$magef)
+maxs5 <- max(sur5$mages)
+maxf5 <- max(sur5$magef)
+ms5 <- mean(sur5$mages)
+mf5 <-mean(sur5$magef)
+sds5 <-sd(sur5$mages)
+sdf5 <- sd(sur5$magef)
+
+# S = 0.6
+mins6 <- min(sur6$mages)
+minf6 <- min(sur6$magef)
+maxs6 <- max(sur6$mages)
+maxf6 <- max(sur6$magef)
+ms6 <- mean(sur6$mages)
+mf6 <-mean(sur6$magef)
+sds6 <-sd(sur6$mages)
+sdf6 <- sd(sur6$magef)
+
+
+#slows 0.5
+sl5 <- cbind(ms5, sds5, mins5, maxs5, 0.5)
+sl5 <- as.data.frame(sl5)
+sl5["Type"] <- "Slow"
+colnames(sl5)[1:5] <- c("mean", "sd", "min", "max","S")
+ 
+
+#slows 0.6 
+sl6 <- cbind(ms6, sds6, mins6, maxs6, 0.6)
+sl6 <- as.data.frame(sl6)
+sl6["Type"] <- "Slow"
+colnames(sl6)[1:5] <- c("mean", "sd", "min", "max", "S")
+
+slow <- rbind(sl5,sl6)
+
+#fasts 0.5
+
+fa5 <- cbind(mf5, sdf5, minf5, maxf5, 0.5)
+fa5 <- as.data.frame(fa5)
+fa5["Type"] <- "Fast"
+colnames(fa5)[1:5] <- c("mean", "sd", "min", "max","S")
+
+#fasts 0.6
+fa6 <- cbind(mf6, sdf6, minf6, maxf6, 0.6)
+fa6 <- as.data.frame(fa6)
+fa6["Type"] <- "Fast"
+colnames(fa6)[1:5] <- c("mean", "sd", "min", "max","S")
+
+fast <- rbind(fa5,fa6)
+
+sum.stats <- rbind(slow, fast)
+sum.stats
+
+###########################################
+
+### S  = 0.4 
+
+#Figures to show the mean age at first reproduction 
+#We can only have one more figure in the manuscript (6 is the limit)
+
+#drop phi 
+phis <- names(new.data) %in% c("X","pc")
+new.data <- new.data[!phis]
 
 #Subset for graphing  - values for Phi (pc) and gbar match other figures
-d1 <- subset(new.data, pc == -0.3 & gbar == 0.1)
-d2 <- subset(new.data, pc == -0.3 & gbar == 0.3)
-d3 <- subset(new.data, pc == -0.3 & gbar == 0.5)
-d4 <- subset(new.data, pc == -0.3 & gbar == 0.7)
-d5 <- subset(new.data, pc == -0.3 & gbar == 0.9)
-d6 <- subset(new.data, pc == 0 & gbar == 0.1)
-d7 <- subset(new.data, pc == 0 & gbar == 0.3)
-d8 <- subset(new.data, pc == 0 & gbar == 0.5)
-d9 <- subset(new.data, pc == 0 & gbar == 0.7)
-d10 <- subset(new.data, pc == 0 & gbar == 0.9)
-d11 <- subset(new.data, pc == 0.5 & gbar == 0.1)
-d12 <- subset(new.data, pc == 0.5 & gbar == 0.3)
-d13 <- subset(new.data, pc == 0.5 & gbar == 0.5)
-d14 <- subset(new.data, pc == 0.5 & gbar == 0.7)
-d15 <- subset(new.data, pc == 0.5 & gbar == 0.9)
-d16 <- subset(new.data, pc == 1 & gbar == 0.1)
-d17 <- subset(new.data, pc == 1 & gbar == 0.3)
-d18 <- subset(new.data, pc == 1 & gbar == 0.5)
-d19 <- subset(new.data, pc == 1 & gbar == 0.7)
-d20 <- subset(new.data, pc == 1 & gbar == 0.9)
+## Trying to solve the problem 
+## Two data frames, one with slow mean age and the other with fast 
+d1s <- subset(new.data, gbar == 0.1, select = gbar:ages)
+d2s <- subset(new.data, gbar == 0.3, select = gbar:ages)
+d3s <- subset(new.data, gbar == 0.5, select = gbar:ages)
+d4s <- subset(new.data, gbar == 0.7, select = gbar:ages)
+d5s <- subset(new.data, gbar == 0.9, select = gbar:ages)
 
-dat.all <- rbind(d1,d2,d3,d4,d5,d6,d7,d8,d9,d10,d11,d12,d13,d14,d15,d16,d17,
-          d18,d19,d20)
+#slow
+dat.alls <- rbind(d1s,d2s,d3s,d4s,d5s)
 
+#fast
+nam <- names(new.data) %in% c("ages")
+new.data <- new.data[!nam]
+
+d1f <- subset(new.data, gbar == 0.1)
+d2f <- subset(new.data, gbar == 0.3)
+d3f <- subset(new.data, gbar == 0.5)
+d4f <- subset(new.data, gbar == 0.7)
+d5f <- subset(new.data, gbar == 0.9)
+
+#fast all
+dat.allf <- rbind(d1f,d2f,d3f,d4f,d5f)
+              
+##################################
 #Label function -  taken from stackoverflow
 #http://stackoverflow.com/questions/14181234/facet-labels-involving-a-greek-symbol
-my.label <- function (expr1 = gamma == .(x), expr2 = phi == .(x)) 
+my.label <- function (expr1 = gamma == .(x), expr2 = sigma == .(x)) 
 {
   quoted1<- substitute(expr1)
   quoted2 <- substitute(expr2)
@@ -235,47 +335,22 @@ my.label <- function (expr1 = gamma == .(x), expr2 = phi == .(x))
         eval(substitute(bquote(expr2, list(x = x)),list(expr2 = quoted2))))
   }
 }
+###################################
 
 # Phi doesn't matter so adjust figures to remove phi
 #facet grid 
-p1 <- ggplot(dat.all, aes(sigma, agef)) + geom_line()
-p1 + facet_grid(gbar ~ pc, labeller=my.label()) +
-  labs(x=expression(sigma), y="Exp Age 1st Reprod - Fast") 
 
-p2 <- ggplot(dat.all, aes(sigma, ages)) + geom_line()
-p2 + facet_grid(gbar ~ pc, labeller=my.label()) +
-  labs(x=expression(sigma), y="Exp Age 1st Reprod - Slow") 
 
-# figure - y = mean age, x = sigma, z = g
-p <- ggplot(dat.all, aes(sigma, ages, color = ages)) + 
-  geom_point(aes(y=ages, col = "Age slow")) +
-  geom_point(aes(y = agef, col = "Age fast"))
-# With one variable
-p + facet_grid(. ~ gbar) +
-  labs(x=expression(sigma), y = "Mean Age at 1st Reproduction")
-  #add layer for fast mean age
- 
-# How to get the fast and slow types next to each other 
-p <- ggplot(dat.all, aes(sigma, ages)) + geom_point()
-p + facet_grid()
-  
-p1 + facet_grid(gbar ~ pc, labeller=my.label()) +
-  labs(x=expression(sigma), y="Exp Age 1st Reprod - Fast") 
+## Plots
 
-# Mean age at first reproduction of fast and slow
-# Use a few different values of S, stage 1 survival probability 
+ggplot() +
+  geom_line(data=dat.alls, aes(x=sigma, y=ages), color = "green") +
+  geom_line(data= dat.allf, aes(x=sigma, y=agef), color="blue")
 
-mean.f <- mean(new.data$agef)
-mean.s <-mean(new.data$ages)
+#S = 0.4
+pz <- ggplot(dat.alls, aes(x=sigma, y=ages)) + geom_line()
+pz + facet_grid(.~gbar, labeller = my.label()) +
+  geom_line(data=dat.allf,aes(x=sigma, y=agef)) +
+  labs(x=expression(sigma), y="Mean Age at 1st Reproduction")
 
-std.s <- sd(new.data$ages)
-std.f <- sd(new.data$agef)     
-
-## example barplot/column graph? in ggplot2
-p1<-ggplot(mtc,aes(x=factor(gear),y=wt,fill=factor(vs)), color=factor(vs)) +  
-  stat_summary(fun.y=mean,position=position_dodge(),geom="bar")
-## example from internet
-library(plyr)
-mp <- ggplot(ddply(new.data, .(agef), mean), aes(x=factor(age), y=factor(score))) + 
-  geom_bar()
 
