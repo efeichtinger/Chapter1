@@ -15,6 +15,7 @@ rm(list = ls())
 library(popbio)
 library(ggplot2)
 library(plyr)
+library(reshape2)
 
 
 ##########################################
@@ -113,7 +114,7 @@ ii <- 0
 
 gb <- 0.01 * (1:99)
 S <- 6
-for (h in 7:8){
+for (h in 3:4){
   S <- (h - 2) * 0.1
   phi <- 0
   for (k in 0:20){
@@ -178,23 +179,119 @@ names(eig.dat) <- c("gbar", "jsur", "sigma", "lam","eigen2", "phi", "r", "R0","D
 
 ##################################
 #Mean of the means across all parameter values (phi doesn't matter here)
+## May 12 2016 - S = 0.1 and 0.2 
+#write.csv(eig.dat, file="May12.csv")
+
+# S = 0.1 and 0.2 
+data.12 <- read.csv("May12.csv", header=TRUE)
+names(data.12) <- c("X", "gbar","jsur","sigma","lam","eigen2","phi",
+                    "r","R0","damp","time","ages","agef")
+
+may12 <- subset(data.12,  jsur == 0.1)
+may12b <- subset(data.12, jsur == 0.2)
+
+mean(may12$ages)
+mean(may12$agef)
+sd(may12$ages)
+sd(may12$agef)
+mean(may12b$ages)
+mean(may12b$agef)
+sd(may12b$ages)
+sd(may12b$agef)
+range(may12$ages)
+range(may12$agef)
+range(may12b$ages)
+range(may12b$agef)
+
+fml <- may12$ages
+fmlm <- may12$agef
+f <- data.frame(c(fml,fmlm))
+colnames(f) <- "age"
+mean(f$age)
+sd(f$age)
+
+
+sht <- may12b$ages
+shty <- may12b$agef
+s <- data.frame(c(sht,shty))
+colnames(s) <- "age"
+mean(s$age)
+sd(s$age)
+
+##############################################################
+
 # May 3 2016, S = 0.4 
 #new.data <- write.csv(eig.dat, file= "May3b.csv")
 new.data <- read.csv("May3b.csv", header=TRUE)
 names(new.data) <- c("X", "gbar","jsur","sigma","lam","eigen2","phi",
             "r","R0","damp","time","ages","agef")
 
+#################################
+
 # May 10 2016, S = 0.5 & 0.6 
-data.56 <- read.csv("May10.csv", header = TRUE)
-names(data.56) <- c("X", "gbar","jsur","sigma","lam","eigen2","phi",
-                    "r","R0","damp","time","ages","agef")
+#data.56 <- read.csv("May10.csv", header = TRUE)
+#names(data.56) <- c("X", "gbar","jsur","sigma","lam","eigen2","phi",
+                    #"r","R0","damp","time","ages","agef")
 
-d41 <- subset(new.data, gbar == 0.1, select = gbar:agef)
-d42 <- subset(new.data, gbar == 0.3, select = gbar:agef)
-d43 <- subset(new.data, gbar == 0.5, select = gbar:agef)
-d44 <- subset(new.data, gbar == 0.7, select = gbar:agef)
-d45 <- subset(new.data, gbar == 0.9, select = gbar:agef)
+#pooled mean
+#pms <- new.data$ages
+#pmf <- new.data$agef
+#pm <- data.frame(c(pms,pmf))
+#colnames(pm) <- "age"
+#mean(pm$age)
+########################################
+new.data["typef"] <- 1
+new.data["types"] <- 0
+#new.data$typef <- as.factor(new.data$typef)
+#new.data$types <- as.factor(new.data$types)
 
+#######
+# Just trying something
+
+# Make two new dataframes with a type indicator and the mean age for each type
+slows <- cbind(new.data$types, new.data$ages)
+colnames(slows) <- c("type", "meanage")
+fasts <- cbind(new.data$typef, new.data$agef)
+colnames(fasts) <- c("type", "meanage")
+
+#bind them together so they are "stacked", all slows then all fasts 
+both <- rbind(slows, fasts)
+
+#subset the full data frame without the mean age columns, twice
+fst <- subset(new.data, select = gbar:time)
+scd <- subset(new.data, select = gbar:time)
+
+#bind to duplicate 
+doub <- rbind(fst, scd)
+
+#Add columns of type and mean age 
+stack <- cbind(doub, both)
+stack$type <- as.factor(stack$type)
+
+#add factor levels 
+levels(stack$type) <- c(levels(stack$type), c("slow","fast"))
+
+stack$type[stack$type ==0] <- "slow"
+stack$type[stack$type ==1] <- "fast"
+
+#subset by g 
+d41 <- subset(stack, gbar == 0.1)
+d42 <- subset(stack, gbar == 0.3)
+d43 <- subset(stack, gbar == 0.5)
+d44 <- subset(stack, gbar == 0.7)
+d45 <- subset(stack, gbar == 0.9)
+
+#bind back together 
+togtr <- rbind(d41,d42,d43,d44,d45)
+
+#Plot so we have levels for g and phenotype  
+yikes <- ggplot(togtr, aes(x=sigma, y=meanage)) + geom_line()
+yikes + facet_grid(gbar~type, labeller = label_both) +
+  labs(x=expression(sigma), y="Mean Age 1st Reproduction")
+  
+# Now do this for the other values of S and add a level for S? 
+
+####################################################################
 
 d51 <- subset(data.56, gbar == 0.1 & jsur == 0.5, select = gbar:agef)
 d52 <- subset(data.56, gbar == 0.3 & jsur == 0.5, select = gbar:agef)
