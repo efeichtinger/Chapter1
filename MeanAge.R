@@ -223,15 +223,15 @@ sd(s$age)
 # May 3 2016, S = 0.4 
 #new.data <- write.csv(eig.dat, file= "May3b.csv")
 new.data <- read.csv("May3b.csv", header=TRUE)
-names(new.data) <- c("X", "gbar","jsur","sigma","lam","eigen2","phi",
+names(new.data) <- c("X", "gamma","S","sigma","lam","eigen2","phi",
             "r","R0","damp","time","ages","agef")
 
 #################################
 
 # May 10 2016, S = 0.5 & 0.6 
-#data.56 <- read.csv("May10.csv", header = TRUE)
-#names(data.56) <- c("X", "gbar","jsur","sigma","lam","eigen2","phi",
-                    #"r","R0","damp","time","ages","agef")
+data.56 <- read.csv("May10.csv", header = TRUE)
+names(data.56) <- c("X", "gamma","S","sigma","lam","eigen2","phi",
+                    "r","R0","damp","time","ages","agef")
 
 #pooled mean
 #pms <- new.data$ages
@@ -292,30 +292,60 @@ yikes + facet_grid(gbar~type, labeller = label_both) +
 # Now do this for the other values of S and add a level for S? 
 
 ####################################################################
+#Subset for graphing  - values for gbar match other figures
+##################################
+#Label function -  taken from stackoverflow
+#http://stackoverflow.com/questions/14181234/facet-labels-involving-a-greek-symbol
+my.label <- function (expr1 = gamma == .(x), expr2 = S == .(x)) 
+{
+  quoted1<- substitute(expr1)
+  quoted2 <- substitute(expr2)
+  function(variable, value) {
+    value <- as.character(value)
+    if(variable == 'gamma')
+      lapply(value, function(x)
+        eval(substitute(bquote(expr1, list(x = x)),list(expr1 = quoted1))))
+    else
+      lapply(value, function(x) 
+        eval(substitute(bquote(expr2, list(x = x)),list(expr2 = quoted2))))
+  }
+}
+###################################
 
-d51 <- subset(data.56, gbar == 0.1 & jsur == 0.5, select = gbar:agef)
-d52 <- subset(data.56, gbar == 0.3 & jsur == 0.5, select = gbar:agef)
-d53 <- subset(data.56, gbar == 0.5 & jsur == 0.5, select = gbar:agef)
-d54 <- subset(data.56, gbar == 0.7 & jsur == 0.5, select = gbar:agef)
-d55 <- subset(data.56, gbar == 0.9 & jsur == 0.5, select = gbar:agef)
 
-#d5all <- rbind(d51,d52,d53,d54,d55)
+d41 <- subset(new.data, gamma == 0.1, select = gamma:agef)
+d42 <- subset(new.data, gamma == 0.3, select = gamma:agef)
+d43 <- subset(new.data, gamma == 0.5, select = gamma:agef)
+d44 <- subset(new.data, gamma == 0.7, select = gamma:agef)
+d45 <- subset(new.data, gamma == 0.9, select = gamma:agef)
 
-d61 <- subset(data.56, gbar == 0.1 & jsur == 0.6, select = gbar:agef)
-d62 <- subset(data.56, gbar == 0.3 & jsur == 0.6, select = gbar:agef)
-d63 <- subset(data.56, gbar == 0.5 & jsur == 0.6, select = gbar:agef)
-d64 <- subset(data.56, gbar == 0.7 & jsur == 0.6, select = gbar:agef)
-d65 <- subset(data.56, gbar == 0.9 & jsur == 0.6, select = gbar:agef)
+d4all <- rbind(d41,d42,d43,d44,d45)
 
-#d6all <- rbind(d61,d62,d63,d64,d65)
+d51 <- subset(data.56, gamma == 0.1 & S == 0.5, select = gamma:agef)
+d52 <- subset(data.56, gamma == 0.3 & S == 0.5, select = gamma:agef)
+d53 <- subset(data.56, gamma == 0.5 & S == 0.5, select = gamma:agef)
+d54 <- subset(data.56, gamma == 0.7 & S == 0.5, select = gamma:agef)
+d55 <- subset(data.56, gamma == 0.9 & S == 0.5, select = gamma:agef)
 
-dall <- rbind(d41,d42,d43,d44,d45,d51,d52,d53,d54,d55,d61,d62,d63,d64,d65)
+d5all <- rbind(d51,d52,d53,d54,d55)
 
-#S = 0.5
-px <- ggplot(dall, aes(x=sigma, y=ages)) + geom_line()
-px + facet_grid(jsur~gbar, labeller = label_both) +
-  geom_line(data=dall, aes(x=sigma, y=agef)) +
-  labs(x=expression(sigma), y="Mean Age at 1st Reproduction")
+d61 <- subset(data.56, gamma == 0.1 & S == 0.6, select = gamma:agef)
+d62 <- subset(data.56, gamma == 0.3 & S == 0.6, select = gamma:agef)
+d63 <- subset(data.56, gamma == 0.5 & S == 0.6, select = gamma:agef)
+d64 <- subset(data.56, gamma == 0.7 & S == 0.6, select = gamma:agef)
+d65 <- subset(data.56, gamma == 0.9 & S == 0.6, select = gamma:agef)
+
+d6all <- rbind(d61,d62,d63,d64,d65)
+
+#bind all 
+d456all <- rbind(d4all,d5all,d6all)
+
+
+#S = 0.4, 0.5, 0.6
+px <- ggplot(d456all, aes(x=sigma, y=ages)) + geom_line()
+px + facet_grid(S~gamma, labeller = my.label()) +
+  geom_line(data=d456all, aes(x=sigma, y=agef)) +
+  labs(x=expression(sigma), y="Mean age at 1st reproduction")
 
 
 
@@ -390,14 +420,6 @@ sum.stats
 phis <- names(new.data) %in% c("X","pc")
 new.data <- new.data[!phis]
 
-#Subset for graphing  - values for Phi (pc) and gbar match other figures
-## Trying to solve the problem 
-## Two data frames, one with slow mean age and the other with fast 
-d1s <- subset(new.data, gbar == 0.1, select = gbar:ages)
-d2s <- subset(new.data, gbar == 0.3, select = gbar:ages)
-d3s <- subset(new.data, gbar == 0.5, select = gbar:ages)
-d4s <- subset(new.data, gbar == 0.7, select = gbar:ages)
-d5s <- subset(new.data, gbar == 0.9, select = gbar:ages)
 
 #slow
 dat.alls <- rbind(d1s,d2s,d3s,d4s,d5s)
@@ -415,24 +437,6 @@ d5f <- subset(new.data, gbar == 0.9)
 #fast all
 dat.allf <- rbind(d1f,d2f,d3f,d4f,d5f)
               
-##################################
-#Label function -  taken from stackoverflow
-#http://stackoverflow.com/questions/14181234/facet-labels-involving-a-greek-symbol
-my.label <- function (expr1 = gamma == .(x), expr2 = sigma == .(x)) 
-{
-  quoted1<- substitute(expr1)
-  quoted2 <- substitute(expr2)
-  function(variable, value) {
-    value <- as.character(value)
-    if(variable == 'gamma')
-      lapply(value, function(x)
-        eval(substitute(bquote(expr1, list(x = x)),list(expr1 = quoted1))))
-    else
-      lapply(value, function(x) 
-        eval(substitute(bquote(expr2, list(x = x)),list(expr2 = quoted2))))
-  }
-}
-###################################
 
 # Phi doesn't matter so adjust figures to remove phi
 #facet grid 
