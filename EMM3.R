@@ -263,7 +263,8 @@ labs(x=expression(sigma), y=expression(lambda)) +
   theme(axis.text.y = element_text(size = 11)) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
   theme(axis.title.y = element_text(size = 15, face = 'bold')) +
-  scale_x_continuous(breaks=pretty_breaks(n=3))
+  scale_x_continuous(breaks=pretty_breaks(n=3)) +
+  scale_y_continuous(breaks=pretty_breaks(n=3), limits=c(0.8,1.3))
 
 #p3b <- ggplot(dat.all, aes(sigma, r)) + geom_line()
 #p3b + facet_grid(gamma~ phi, labeller=my.label()) + 
@@ -288,7 +289,8 @@ labs(x=expression(sigma), y=expression('R'[0])) +
   theme(axis.text.y = element_text(size = 11)) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
   theme(axis.title.y = element_text(size = 15, face = 'bold')) +
-  scale_x_continuous(breaks=pretty_breaks(n=3))
+  scale_x_continuous(breaks=pretty_breaks(n=3)) +
+  scale_y_continuous(breaks=c(0.4,1,1.6), limits=c(0,1.8))
 
 
 #Figure 4 - T as a function of sigma (similar style as 3)
@@ -302,7 +304,9 @@ p5 + facet_grid(gamma ~ phi,labeller=my.label()) +
   theme(axis.text.y = element_text(size = 11)) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
   theme(axis.title.y = element_text(size = 15, face = 'bold')) +
-  scale_x_continuous(breaks=pretty_breaks(n=3))
+  scale_x_continuous(breaks=pretty_breaks(n=3)) +
+  scale_y_continuous(breaks = pretty_breaks(n=3),limits=c(3,7))
+  
 
 
 #Figure 5 - Damping ratio panel (similar style as 3)
@@ -316,7 +320,8 @@ p6 + facet_grid(gamma ~ phi,labeller=my.label()) +
   theme(axis.text.y = element_text(size = 11)) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
   theme(axis.title.y = element_text(size = 13, face = 'bold')) +
-  scale_x_continuous(breaks=pretty_breaks(n=3))
+  scale_x_continuous(breaks=pretty_breaks(n=3)) +
+  scale_y_continuous(breaks=c(1,2,3), limits=c(0.5,3))
 
 
 
