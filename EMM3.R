@@ -315,7 +315,7 @@ p6 + facet_grid(gamma ~ phi,labeller=my.label()) +
   theme(axis.text.x = element_text(size = 11, angle = 45)) +
   theme(axis.text.y = element_text(size = 11)) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
-  theme(axis.title.y = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 13, face = 'bold')) +
   scale_x_continuous(breaks=pretty_breaks(n=3))
 
 
