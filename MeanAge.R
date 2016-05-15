@@ -350,9 +350,10 @@ px + facet_grid(S~gamma, labeller = my.label()) +
   theme(strip.text.y = element_text(size = 13)) + 
   theme(axis.text.x = element_text(size = 11, angle = 45)) +
   theme(axis.text.y = element_text(size = 11)) +
-  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
-  theme(axis.title.y = element_text(size = 15, face = 'bold')) +
-  scale_x_continuous(breaks=pretty_breaks(n=3))
+  theme(axis.title.x = element_text(size = 15)) +
+  theme(axis.title.y = element_text(size = 13)) +
+  scale_x_continuous(breaks=pretty_breaks(n=3)) +
+  scale_y_continuous(breaks=pretty_breaks(n=4))
 
 
 ####################################################
