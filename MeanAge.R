@@ -221,18 +221,22 @@ sd(s$age)
 ##############################################################
 
 # May 3 2016, S = 0.4 
+# Read in data from output 
 #new.data <- write.csv(eig.dat, file= "May3b.csv")
 new.data <- read.csv("May3b.csv", header=TRUE)
 names(new.data) <- c("X", "gamma","S","sigma","lam","eigen2","phi",
             "r","R0","damp","time","ages","agef")
 
-#################################
-
 # May 10 2016, S = 0.5 & 0.6 
+# Read in data from output
 data.56 <- read.csv("May10.csv", header = TRUE)
 names(data.56) <- c("X", "gamma","S","sigma","lam","eigen2","phi",
                     "r","R0","damp","time","ages","agef")
 
+
+
+
+#####################################
 #pooled mean
 #pms <- new.data$ages
 #pmf <- new.data$agef
@@ -240,15 +244,48 @@ names(data.56) <- c("X", "gamma","S","sigma","lam","eigen2","phi",
 #colnames(pm) <- "age"
 #mean(pm$age)
 ########################################
-new.data["typef"] <- 1
-new.data["types"] <- 0
+
+
+# S= 0.5 and 0.6  
+data.56["typef"] <- 1
+data.56["types"] <- 0
 #new.data$typef <- as.factor(new.data$typef)
 #new.data$types <- as.factor(new.data$types)
 
+# Make two new dataframes with a type indicator and the mean age for each type
+slows56 <- cbind(data.56$types, data.56$ages)
+colnames(slows56) <- c("type", "meanage")
+fasts56 <- cbind(data.56$typef, data.56$agef)
+colnames(fasts56) <- c("type", "meanage")
+
+#bind them together so they are "stacked", all slows then all fasts 
+both56 <- rbind(slows56, fasts56)
+
+#subset the full data frame without the mean age columns, twice
+fst56 <- subset(data.56, select = gamma:time)
+scd56 <- subset(data.56, select = gamma:time)
+
+#bind to duplicate 
+doub56 <- rbind(scd56, fst56)
+
+#Add columns of type and mean age 
+stack56 <- cbind(doub56, both56)
+stack56$type <- as.factor(stac56k$type)
+
+#add factor levels 
+levels(stack56$type) <- c(levels(stack56$type), c("slow","fast"))
+
+stack56$types[stack56$types ==0] <- "slow"
+stack56$typef[stack56$typef ==1] <- "fast"
+
+
 #######
 # Just trying something
-
+ # S  = 0.4 
 # Make two new dataframes with a type indicator and the mean age for each type
+new.data["types"] <- 0
+new.data["typef"] <- 1
+
 slows <- cbind(new.data$types, new.data$ages)
 colnames(slows) <- c("type", "meanage")
 fasts <- cbind(new.data$typef, new.data$agef)
@@ -258,11 +295,11 @@ colnames(fasts) <- c("type", "meanage")
 both <- rbind(slows, fasts)
 
 #subset the full data frame without the mean age columns, twice
-fst <- subset(new.data, select = gbar:time)
-scd <- subset(new.data, select = gbar:time)
+fst <- subset(new.data, select = gamma:time)
+scd <- subset(new.data, select = gamma:time)
 
 #bind to duplicate 
-doub <- rbind(fst, scd)
+doub <- rbind(fst,scd)
 
 #Add columns of type and mean age 
 stack <- cbind(doub, both)
@@ -274,20 +311,25 @@ levels(stack$type) <- c(levels(stack$type), c("slow","fast"))
 stack$type[stack$type ==0] <- "slow"
 stack$type[stack$type ==1] <- "fast"
 
+
+dt.all <- rbind(stack,stack56)
+
+
 #subset by g 
-d41 <- subset(stack, gbar == 0.1)
-d42 <- subset(stack, gbar == 0.3)
-d43 <- subset(stack, gbar == 0.5)
-d44 <- subset(stack, gbar == 0.7)
-d45 <- subset(stack, gbar == 0.9)
+da <- subset(dt.all, gamma == 0.1)
+db <- subset(dt.all, gamma == 0.3)
+dc <- subset(dt.all, gamma == 0.5)
+de <- subset(dt.all, gamma == 0.7)
+df <- subset(dt.all, gamma == 0.9)
 
 #bind back together 
-togtr <- rbind(d41,d42,d43,d44,d45)
+togtr <- rbind(da,dc,dc,de,df)
+
 
 #Plot so we have levels for g and phenotype  
-yikes <- ggplot(togtr, aes(x=sigma, y=meanage)) + geom_line()
-yikes + facet_grid(gbar~type, labeller = label_both) +
-  labs(x=expression(sigma), y="Mean Age 1st Reproduction")
+#yikes <- ggplot(togtr, aes(x=sigma, y=meanage)) + geom_line()
+#yikes + facet_grid(gbar~type, labeller = label_both) +
+  #labs(x=expression(sigma), y="Mean Age 1st Reproduction")
   
 # Now do this for the other values of S and add a level for S? 
 
@@ -340,9 +382,9 @@ d6all <- rbind(d61,d62,d63,d64,d65)
 #bind all 
 d456all <- rbind(d4all,d5all,d6all)
 
-
+#####################################################
 #S = 0.4, 0.5, 0.6
-px <- ggplot(d456all, aes(x=sigma, y=ages)) + geom_line()
+px <- ggplot(d456all, aes(x=sigma, y=ages, linetype = type)) + geom_line()
 px + facet_grid(S~gamma, labeller = my.label()) +
   geom_line(data=d456all, aes(x=sigma, y=agef), linetype=2) +
   labs(x=expression(sigma), y="Mean age at 1st reproduction") +
@@ -355,13 +397,31 @@ px + facet_grid(S~gamma, labeller = my.label()) +
   scale_x_continuous(breaks=pretty_breaks(n=3)) +
   scale_y_continuous(breaks=pretty_breaks(n=4))
 
+############################################################
 
+#togtr
+
+pzz <- ggplot(togtr, 
+        aes(x=sigma, y=meanage, linetype = type)) + geom_line() 
+pzz + facet_grid(S~gamma, labeller = my.label()) +
+labs(x=expression(sigma), y="Mean age at 1st reproduction") +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15)) +
+  theme(axis.title.y = element_text(size = 13)) +
+  scale_x_continuous(breaks=pretty_breaks(n=3)) +
+  scale_y_continuous(breaks=pretty_breaks(n=4))
+
+        
 ####################################################
 
 #subset by S 
-sur5 <- subset(data.56, jsur == 0.5)
-sur6 <- subset(data.56, jsur == 0.6)
+sur5 <- subset(data.56, S == 0.5)
+sur6 <- subset(data.56, S == 0.6)
 
+##################################
 # S = 0.5
 mins5 <- min(sur5$mages)
 minf5 <- min(sur5$magef)
@@ -381,7 +441,7 @@ ms6 <- mean(sur6$mages)
 mf6 <-mean(sur6$magef)
 sds6 <-sd(sur6$mages)
 sdf6 <- sd(sur6$magef)
-
+##############################################
 
 #slows 0.5
 sl5 <- cbind(ms5, sds5, mins5, maxs5, 0.5)
