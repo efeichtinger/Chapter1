@@ -344,9 +344,15 @@ d456all <- rbind(d4all,d5all,d6all)
 #S = 0.4, 0.5, 0.6
 px <- ggplot(d456all, aes(x=sigma, y=ages)) + geom_line()
 px + facet_grid(S~gamma, labeller = my.label()) +
-  geom_line(data=d456all, aes(x=sigma, y=agef)) +
-  labs(x=expression(sigma), y="Mean age at 1st reproduction")
-
+  geom_line(data=d456all, aes(x=sigma, y=agef), linetype=2) +
+  labs(x=expression(sigma), y="Mean age at 1st reproduction") +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold')) +
+  scale_x_continuous(breaks=pretty_breaks(n=3))
 
 
 ####################################################
