@@ -169,20 +169,21 @@ str(eig.5)
 eig.all <- rbind(eig.4,eig.2,eig.3,eig.5)
 eig.all["r"] <-log(eig.all$lam)
 names(eig.all)[names(eig.all)=='gbar'] <- 'gamma'
+names(eig.all)[names(eig.all)=='jsur'] <- 'S'
 str(eig.all)
 
 ##Figures - labeled as intended for manuscript (Fig 1 is life cycle)
 
 #Figure 2 - lambda as a function of sigma across different g at 2 phis
 #2 figures (or more, can increase to 4 panels) in one, phi = 1 and phi = 0
-datA <- subset(eig.all, phi=="1" & jsur == "0.7" & gamma == "0.5")
-datB <- subset(eig.all, phi=="0" & jsur == "0.7" & gamma == "0.5")
+datA <- subset(eig.all, phi=="1" & S == "0.7" & gamma == "0.5")
+datB <- subset(eig.all, phi=="0" & S == "0.7" & gamma == "0.5")
 datAB <- rbind(datA, datB)
-datC <- subset(eig.all, phi==0.9 & gamma == 0.1 & jsur == 0.5)
-datD <- subset(eig.all, phi==0.9 & gamma == 0.3 & jsur == 0.5)
-datE <- subset(eig.all, phi==0.9 & gamma == 0.5 & jsur == 0.5)
-datF <- subset(eig.all, phi==0.9 & gamma == 0.7 & jsur == 0.5)
-datG <- subset(eig.all, phi==0.9 & gamma == 0.9 & jsur == 0.5)
+datC <- subset(eig.all, phi==0.9 & gamma == 0.1 & S == 0.5)
+datD <- subset(eig.all, phi==0.9 & gamma == 0.3 & S == 0.5)
+datE <- subset(eig.all, phi==0.9 & gamma == 0.5 & S == 0.5)
+datF <- subset(eig.all, phi==0.9 & gamma == 0.7 & S == 0.5)
+datG <- subset(eig.all, phi==0.9 & gamma == 0.9 & S == 0.5)
 
 #phi 1 Code does not work
 #p1 <- ggplot(datC, aes(x=sigma, y=lam)) +
@@ -194,23 +195,23 @@ datG <- subset(eig.all, phi==0.9 & gamma == 0.9 & jsur == 0.5)
   #labs(color = "g", x = expression(sigma), y = expression(lambda))
 
 #phi 0
-datH <- subset(eig.all, phi==0& gamma == 0.1 & jsur == 0.5)
-datI <- subset(eig.all, phi==0 & gamma == 0.3 & jsur == 0.5)
-datJ <- subset(eig.all, phi==0 & gamma == 0.5 & jsur == 0.5)
-datK <- subset(eig.all, phi==0 & gamma == 0.7 & jsur == 0.5)
-datL <- subset(eig.all, phi==0 & gamma == 0.9 & jsur == 0.5)
+datH <- subset(eig.all, phi==0& gamma == 0.1 & S == 0.5)
+datI <- subset(eig.all, phi==0 & gamma == 0.3 & S == 0.5)
+datJ <- subset(eig.all, phi==0 & gamma == 0.5 & S == 0.5)
+datK <- subset(eig.all, phi==0 & gamma == 0.7 & S == 0.5)
+datL <- subset(eig.all, phi==0 & gamma == 0.9 & S == 0.5)
 
-datM <- subset(eig.all, phi == 0.5 & gamma==0.1 & jsur==0.5)
-datN <- subset(eig.all, phi == 0.5 & gamma==0.3 & jsur==0.5)
-datO <- subset(eig.all, phi ==0.5 & gamma==0.5 & jsur==0.5)
-datP <- subset(eig.all, phi == 0.5 & gamma==0.7 & jsur==0.5)
-datQ <- subset(eig.all, phi ==0.5 & gamma==0.9 & jsur==0.5)
+datM <- subset(eig.all, phi == 0.5 & gamma==0.1 & S==0.5)
+datN <- subset(eig.all, phi == 0.5 & gamma==0.3 & S==0.5)
+datO <- subset(eig.all, phi ==0.5 & gamma==0.5 & S==0.5)
+datP <- subset(eig.all, phi == 0.5 & gamma==0.7 & S==0.5)
+datQ <- subset(eig.all, phi ==0.5 & gamma==0.9 & S==0.5)
 
-datR <- subset(eig.all, phi == -0.3 & gamma==0.1 & jsur==0.5)
-datS <- subset(eig.all, phi == -0.3 & gamma==0.3 & jsur==0.5)
-datT <- subset(eig.all, phi == -0.3 & gamma==0.5 & jsur==0.5)
-datU <- subset(eig.all, phi == -0.3 & gamma==0.7 & jsur==0.5)
-datV <- subset(eig.all, phi == -0.3 & gamma==0.9 & jsur==0.5)
+datR <- subset(eig.all, phi == -0.3 & gamma==0.1 & S==0.5)
+datS <- subset(eig.all, phi == -0.3 & gamma==0.3 & S==0.5)
+datT <- subset(eig.all, phi == -0.3 & gamma==0.5 & S==0.5)
+datU <- subset(eig.all, phi == -0.3 & gamma==0.7 & S==0.5)
+datV <- subset(eig.all, phi == -0.3 & gamma==0.9 & S==0.5)
 
 
 #p2 <- ggplot(datH, aes(x=sigma, y=lam)) +
@@ -261,18 +262,19 @@ labs(x=expression(sigma), y=expression(lambda)) +
   theme(axis.text.x = element_text(size = 11, angle = 45)) +
   theme(axis.text.y = element_text(size = 11)) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
-  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+  theme(axis.title.y = element_text(size = 15, face = 'bold')) +
+  scale_x_continuous(breaks=pretty_breaks(n=3))
 
-p3b <- ggplot(dat.all, aes(sigma, r)) + geom_line()
-p3b + facet_grid(gamma~ phi, labeller=my.label()) + 
-  labs(x=expression(sigma), y="r") +
-  theme(strip.text.x = element_text(size = 13)) +
-  theme(strip.text.y = element_text(size = 13)) + 
-  theme(axis.text.x = element_text(size = 11, angle = 45)) +
-  theme(axis.text.y = element_text(size = 11)) +
-  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
-  theme(axis.title.y = element_text(size = 15, face = 'bold'))
-
+#p3b <- ggplot(dat.all, aes(sigma, r)) + geom_line()
+#p3b + facet_grid(gamma~ phi, labeller=my.label()) + 
+  #labs(x=expression(sigma), y="r") +
+  #theme(strip.text.x = element_text(size = 13)) +
+  #theme(strip.text.y = element_text(size = 13)) + 
+  #theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  #theme(axis.text.y = element_text(size = 11)) +
+  #theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  #theme(axis.title.y = element_text(size = 15, face = 'bold')) +
+  #scale_x_continuous(breaks=pretty_breaks(n=3))
 
 
 #Figure 3 - R0 as a function of sigma (similar style as 3)
@@ -285,7 +287,8 @@ labs(x=expression(sigma), y=expression('R'[0])) +
   theme(axis.text.x = element_text(size = 11, angle = 45)) +
   theme(axis.text.y = element_text(size = 11)) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
-  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+  theme(axis.title.y = element_text(size = 15, face = 'bold')) +
+  scale_x_continuous(breaks=pretty_breaks(n=3))
 
 
 #Figure 4 - T as a function of sigma (similar style as 3)
@@ -298,7 +301,8 @@ p5 + facet_grid(gamma ~ phi,labeller=my.label()) +
   theme(axis.text.x = element_text(size = 11, angle = 45)) +
   theme(axis.text.y = element_text(size = 11)) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
-  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+  theme(axis.title.y = element_text(size = 15, face = 'bold')) +
+  scale_x_continuous(breaks=pretty_breaks(n=3))
 
 
 #Figure 5 - Damping ratio panel (similar style as 3)
@@ -311,8 +315,12 @@ p6 + facet_grid(gamma ~ phi,labeller=my.label()) +
   theme(axis.text.x = element_text(size = 11, angle = 45)) +
   theme(axis.text.y = element_text(size = 11)) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
-  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+  theme(axis.title.y = element_text(size = 15, face = 'bold')) +
+  scale_x_continuous(breaks=pretty_breaks(n=3))
 
+
+
+##################################################################
 
 #Pop dynamics (lambda, R0 and T) as a function of g in a single type population
 #I hope I'm understanding this correctly in that there is no sigma here 
