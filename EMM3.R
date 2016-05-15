@@ -312,14 +312,14 @@ p5 + facet_grid(gamma ~ phi,labeller=my.label()) +
 #Figure 5 - Damping ratio panel (similar style as 3)
 p6 <- ggplot(dat.all, aes(sigma, DampR)) + geom_line()
 p6 + facet_grid(gamma ~ phi,labeller=my.label()) +
-  labs(x=expression(sigma), y="Damping Ratio") +
+  labs(x=expression(sigma), y="Damping ratio") +
   #changes text size in panels 
   theme(strip.text.x = element_text(size = 13)) +
   theme(strip.text.y = element_text(size = 13)) +
   theme(axis.text.x = element_text(size = 11, angle = 45)) +
   theme(axis.text.y = element_text(size = 11)) +
   theme(axis.title.x = element_text(size = 15, face = 'bold')) +
-  theme(axis.title.y = element_text(size = 13, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 13)) +
   scale_x_continuous(breaks=pretty_breaks(n=3)) +
   scale_y_continuous(breaks=c(1,2,3), limits=c(0.5,3))
 
