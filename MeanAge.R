@@ -245,6 +245,9 @@ names(data.56) <- c("X", "gamma","S","sigma","lam","eigen2","phi",
 #mean(pm$age)
 ########################################
 
+### Reformat data by adding indicator columns for each phenotype
+### I used the brute force approach although there are probably functions
+### that could do it 
 
 # S= 0.5 and 0.6  
 data.56["typef"] <- 1
@@ -253,8 +256,10 @@ data.56["types"] <- 0
 #new.data$types <- as.factor(new.data$types)
 
 # Make two new dataframes with a type indicator and the mean age for each type
+# 0 for slow
 slows56 <- cbind(data.56$types, data.56$ages)
 colnames(slows56) <- c("type", "meanage")
+# 1 for fast
 fasts56 <- cbind(data.56$typef, data.56$agef)
 colnames(fasts56) <- c("type", "meanage")
 
@@ -270,13 +275,14 @@ doub56 <- rbind(scd56, fst56)
 
 #Add columns of type and mean age 
 stack56 <- cbind(doub56, both56)
-stack56$type <- as.factor(stac56k$type)
 
 #add factor levels 
+stack56$type <- as.factor(stack56$type)
 levels(stack56$type) <- c(levels(stack56$type), c("slow","fast"))
 
-stack56$types[stack56$types ==0] <- "slow"
-stack56$typef[stack56$typef ==1] <- "fast"
+stack56$type[stack56$type ==0] <- "slow"
+stack56$type[stack56$type ==1] <- "fast"
+
 
 
 #######
@@ -323,7 +329,7 @@ de <- subset(dt.all, gamma == 0.7)
 df <- subset(dt.all, gamma == 0.9)
 
 #bind back together 
-togtr <- rbind(da,dc,dc,de,df)
+togtr <- rbind(da,db,dc,dc,de,df)
 
 
 #Plot so we have levels for g and phenotype  
