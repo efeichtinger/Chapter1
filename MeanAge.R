@@ -16,6 +16,7 @@ library(popbio)
 library(ggplot2)
 library(plyr)
 library(reshape2)
+library(scales)
 
 
 ##########################################
