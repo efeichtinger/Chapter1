@@ -23,6 +23,7 @@ library(scatterplot3d)
 library(ggplot2)
 library(plot3D)
 library(grid)
+library(scales)
 
 #identity matrix 
 iden <- matrix(c(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1), nrow=4, ncol=4,
@@ -297,7 +298,7 @@ labs(x=expression(sigma), y=expression('R'[0])) +
 ##FIX
 p5 <- ggplot(dat.all, aes(sigma, time)) + geom_line()
 p5 + facet_grid(gamma ~ phi,labeller=my.label()) +
-  labs(x=expression(sigma),y=expression('T'[1])) +
+  labs(x=expression(sigma),y=expression('T')) +
   theme(strip.text.x = element_text(size = 13)) +
   theme(strip.text.y = element_text(size = 13)) +
   theme(axis.text.x = element_text(size = 11, angle = 45)) +
