@@ -115,7 +115,7 @@ ii <- 0
 
 gb <- 0.01 * (1:99)
 S <- 6
-for (h in 3:4){
+for (h in 10:10){
   S <- (h - 2) * 0.1
   phi <- 0
   for (k in 0:20){
@@ -176,7 +176,7 @@ for (h in 3:4){
 }
 
 eig.dat <- data.frame(gbar = gbr, js = jsur, sigma = sig, eigen = eig, eigen2 = eig2, pc = poc, instr = r, R0 = nrepd, damp = dpr, time = genT, ages =MES, agef =MEF)
-names(eig.dat) <- c("gbar", "jsur", "sigma", "lam","eigen2", "phi", "r", "R0","DampR", "time", "mages", "magef")
+names(eig.dat) <- c("gamma", "S", "sigma", "lam","eigen2", "phi", "r", "R0","DampR", "time", "ages", "agef")
 
 ##################################
 #Mean of the means across all parameter values (phi doesn't matter here)
@@ -233,6 +233,37 @@ names(new.data) <- c("X", "gamma","S","sigma","lam","eigen2","phi",
 data.56 <- read.csv("May10.csv", header = TRUE)
 names(data.56) <- c("X", "gamma","S","sigma","lam","eigen2","phi",
                     "r","R0","damp","time","ages","agef")
+
+#### June 3 2016 - Happy birthday to self although this work fills me with rage
+# Subset data where sigma = 0 to see relationship between g and lambda, R0, T
+# Using data.56 and new.data
+no.sig4 <- subset(new.data, sigma ==0)
+no.sig5 <- subset(data.56, sigma == 0 & S == 0.5)
+no.sig6 <- subset(data.56, sigma == 0 & S == 0.6)
+
+new <- rbind(no.sig4,no.sig5,no.sig6)
+
+## plots 
+
+# Lambda
+ggplot(data = new, aes(x=gamma, y=lambda, fill=S)) + geom_line()
+
+ggplot() + 
+  geom_line(data=no.sig5, aes(x=gamma, y=lam), color = "green") +
+  geom_line(data=no.sig6, aes(x =gamma, y=lam), color= "blue") +
+  geom_line(data=no.sig4, aes(x=gamma, y=lam), color= "red") +
+  labs(x=expression(sigma), y =expression(lambda)) 
+
+ggplot() + 
+  geom_line(data=no.sig5, aes(x=gamma, y=R0), color = "green") +
+  geom_line(data=no.sig6, aes(x =gamma, y=R0), color= "blue") +
+  geom_line(data=no.sig4, aes(x=gamma, y=R0), color= "red")
+
+ggplot() +
+  geom_line(data=no.sig5, aes(x=gamma, y=time), color = "green") +
+  geom_line(data=no.sig6, aes(x =gamma, y=time), color= "blue") +
+  geom_line(data=no.sig4, aes(x=gamma, y=time), color= "red")
+
 
 
 
