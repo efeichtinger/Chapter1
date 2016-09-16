@@ -691,7 +691,7 @@ dP9 <- subset(eig.all, phi==-0.3 & gamma == 0.5 & S == 0.9)
 
 dddd <- rbind(dP1,dP2,dP3,dP4,dP5,dP6,dP7,dP8,dP9)
 
-all <-  rbind(dddd,dd,ddd,d)
+all <-  rbind(dddd,dd,ddd)
   
   
 #Lambda
