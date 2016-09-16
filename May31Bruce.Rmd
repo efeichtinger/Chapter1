@@ -27,6 +27,8 @@ no.sig4 <- subset(new.data, sigma ==0)
 no.sig5 <- subset(data.56, sigma == 0 & S == 0.5)
 no.sig6 <- subset(data.56, sigma == 0 & S == 0.6)
 
+no.sig.df <- rbind(no.sig4,no.sig5,no.sig6)
+
 ## plots 
 
 # Lambda
