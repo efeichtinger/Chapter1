@@ -228,6 +228,36 @@ new.data <- read.csv("May3b.csv", header=TRUE)
 names(new.data) <- c("X", "gamma","S","sigma","lam","eigen2","phi",
             "r","R0","damp","time","ages","agef")
 
+phis3 <- subset(new.data, new.data$phi == -0.3 & gamma == 0.5)
+phis0 <- subset(new.data, new.data$phi == 0 & gamma == 0.5)
+phis5 <- subset(new.data, new.data$phi == 0.5 & gamma == 0.5)
+phis9 <- subset(new.data, new.data$phi == 0.9 & gamma == 0.5)
+
+may17 <- rbind(phis3, phis0, phis5, phis9)
+
+
+ggplot(data = may17, aes(x=sigma, y=lam)) + 
+  geom_line() + 
+  theme_bw() + 
+  facet_grid(. ~phi) + 
+  labs(x = expression(sigma), y=expression(lambda)) + 
+  theme(axis.text.x = element_text(angle = 45, size = 8))
+
+ggplot(data = may17, aes(x=sigma, y=R0)) + 
+  geom_line() + 
+  theme_bw() + 
+  facet_grid(. ~phi) + 
+  labs(x = expression(sigma), y="Net Reproductive Rate") + 
+  theme(axis.text.x = element_text(angle = 45, size = 8))
+
+ggplot(data = may17, aes(x=sigma, y=time)) + 
+  geom_line() + 
+  theme_bw() + 
+  facet_grid(. ~phi) + 
+  labs(x = expression(sigma), y="Generation Time") + 
+  theme(axis.text.x = element_text(angle = 45, size = 8))
+
+
 # May 10 2016, S = 0.5 & 0.6 
 # Read in data from output
 data.56 <- read.csv("May10.csv", header = TRUE)
@@ -242,17 +272,52 @@ no.sig5 <- subset(data.56, sigma == 0 & S == 0.5)
 no.sig6 <- subset(data.56, sigma == 0 & S == 0.6)
 
 new <- rbind(no.sig4,no.sig5,no.sig6)
+new$S <- as.factor(new$S)
 
 ## plots 
 
 # Lambda
-ggplot(data = new, aes(x=gamma, y=lambda, fill=S)) + geom_line()
+ggplot(data = new, aes(x=gamma, y=lam, fill=S)) + geom_line()
+
+## 5 15 2017 
+ggplot(data = new, aes(x=gamma, y = lam, colour=S)) +
+  geom_line(size=1) + 
+  labs(x="Individual Growth Rate", y = expression(lambda)) + 
+  theme_bw() + 
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank()) +
+  scale_color_manual(breaks = c("0.4","0.5","0.6"), 
+                     values = c("seagreen4", "seagreen3", "seagreen2"))
+
+ggplot(data = new, aes(x= gamma, y = R0, colour=S)) + 
+  geom_line(size = 1) + 
+  labs(x="Individual Growth Rate", y = "Net Reproductive Rate") + 
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank()) +
+  scale_color_manual(breaks = c("0.4","0.5","0.6"), 
+                     values = c("seagreen4", "seagreen3", "seagreen2"))
+
+ggplot(data = new, aes(x= gamma, y = time, colour=S)) + 
+  geom_line(size = 1) + 
+  labs(x="Individual Growth Rate", y = "Generation Time") + 
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank()) +
+  scale_color_manual(breaks = c("0.4","0.5","0.6"), 
+                     values = c("seagreen4", "seagreen3", "seagreen2"))
+
+
+#png("Rplot01.png", width = 7.48, height = 5.31 , units="in", res = 300)
 
 ggplot() + 
   geom_line(data=no.sig5, aes(x=gamma, y=lam), color = "green") +
   geom_line(data=no.sig6, aes(x =gamma, y=lam), color= "blue") +
   geom_line(data=no.sig4, aes(x=gamma, y=lam), color= "red") +
-  labs(x=expression(sigma), y =expression(lambda)) 
+  labs(x="Growth Rate", y =expression(lambda)) +
+  theme_bw() + 
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())
 
 ggplot() + 
   geom_line(data=no.sig5, aes(x=gamma, y=R0), color = "green") +
@@ -420,9 +485,26 @@ d6all <- rbind(d61,d62,d63,d64,d65)
 #bind all 
 d456all <- rbind(d4all,d5all,d6all)
 
+newnew <- subset(d456all, gamma==0.5)
+
+px <- ggplot(newnew, aes(x=sigma, y=ages)) + geom_line()
+px + facet_grid(S~gamma, labeller = my.label()) +
+  geom_line(data=newnew, aes(x=sigma, y=agef), linetype=2) +
+  labs(x=expression(sigma), y="Mean age at 1st reproduction") +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15)) +
+  theme(axis.title.y = element_text(size = 13)) +
+  scale_x_continuous(breaks=pretty_breaks(n=3)) +
+  scale_y_continuous(breaks=pretty_breaks(n=4)) +
+  theme_bw()
+
+
 #####################################################
 #S = 0.4, 0.5, 0.6
-px <- ggplot(d456all, aes(x=sigma, y=ages, linetype = type)) + geom_line()
+px <- ggplot(d456all, aes(x=sigma, y=ages)) + geom_line()
 px + facet_grid(S~gamma, labeller = my.label()) +
   geom_line(data=d456all, aes(x=sigma, y=agef), linetype=2) +
   labs(x=expression(sigma), y="Mean age at 1st reproduction") +
@@ -433,7 +515,8 @@ px + facet_grid(S~gamma, labeller = my.label()) +
   theme(axis.title.x = element_text(size = 15)) +
   theme(axis.title.y = element_text(size = 13)) +
   scale_x_continuous(breaks=pretty_breaks(n=3)) +
-  scale_y_continuous(breaks=pretty_breaks(n=4))
+  scale_y_continuous(breaks=pretty_breaks(n=4)) +
+  theme_bw()
 
 ############################################################
 
