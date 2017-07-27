@@ -1,0 +1,144 @@
+---
+title: "More on Mean Age"
+author: "Erin Feichtinger"
+date: "May 11, 2016"
+output: html_document
+---
+
+I have the simulation output for 3 different values of S (0.4, 0.5, 0.6), juvenile survival probability. 
+
+
+```{r, echo=FALSE}
+library(ggplot2)
+new2 <- read.csv("May3b.csv", header=TRUE)
+
+mins4 <- min(new2$ages)
+minf4 <- min(new2$agef)
+maxs4 <- max(new2$ages)
+maxf4 <- max(new2$agef)
+ms4 <- mean(new2$ages)
+mf4 <- mean(new2$agef)
+sds4 <- sd(new2$ages)
+sdf4 <- sd(new2$agef)
+
+#slows 0.4
+sl4 <- cbind(ms4, sds4, mins4, maxs4, 0.4)
+sl4 <- as.data.frame(sl4)
+sl4["Type"] <- "Slow"
+colnames(sl4)[1:5] <- c("mean", "sd", "min", "max","S")
+
+#fasts 0.5
+fa4 <- cbind(mf4, sdf4, minf4, maxf4, 0.4)
+fa4 <- as.data.frame(fa4)
+fa4["Type"] <- "Fast"
+colnames(fa4)[1:5] <- c("mean", "sd", "min", "max","S")
+
+#Where S = 0.5 and 0.6
+new.data <- read.csv("May10.csv", header = TRUE)
+
+sur5 <- subset(new.data, jsur == 0.5)
+sur6 <- subset(new.data, jsur == 0.6)
+
+# S = 0.5
+mins5 <- min(sur5$mages)
+minf5 <- min(sur5$magef)
+maxs5 <- max(sur5$mages)
+maxf5 <- max(sur5$magef)
+ms5 <- mean(sur5$mages)
+mf5 <-mean(sur5$magef)
+sds5 <-sd(sur5$mages)
+sdf5 <- sd(sur5$magef)
+
+# S = 0.6
+mins6 <- min(sur6$mages)
+minf6 <- min(sur6$magef)
+maxs6 <- max(sur6$mages)
+maxf6 <- max(sur6$magef)
+ms6 <- mean(sur6$mages)
+mf6 <-mean(sur6$magef)
+sds6 <-sd(sur6$mages)
+sdf6 <- sd(sur6$magef)
+
+
+#slows 0.5
+sl5 <- cbind(ms5, sds5, mins5, maxs5, 0.5)
+sl5 <- as.data.frame(sl5)
+sl5["Type"] <- "Slow"
+colnames(sl5)[1:5] <- c("mean", "sd", "min", "max","S")
+ 
+
+#slows 0.6 
+sl6 <- cbind(ms6, sds6, mins6, maxs6, 0.6)
+sl6 <- as.data.frame(sl6)
+sl6["Type"] <- "Slow"
+colnames(sl6)[1:5] <- c("mean", "sd", "min", "max", "S")
+
+slow <- rbind(sl4,sl5,sl6)
+
+#fasts 0.5
+
+fa5 <- cbind(mf5, sdf5, minf5, maxf5, 0.5)
+fa5 <- as.data.frame(fa5)
+fa5["Type"] <- "Fast"
+colnames(fa5)[1:5] <- c("mean", "sd", "min", "max","S")
+
+#fasts 0.6
+fa6 <- cbind(mf6, sdf6, minf6, maxf6, 0.6)
+fa6 <- as.data.frame(fa6)
+fa6["Type"] <- "Fast"
+colnames(fa6)[1:5] <- c("mean", "sd", "min", "max","S")
+
+fast <- rbind(fa4,fa5,fa6)
+
+sum.stats <- rbind(slow, fast)
+sum.stats
+```
+
+At first glance, a few things pop out to me. First, the ranges increase as S increases. There are some strange things in this table however. For the fast phenotype, as survival increases the mean increases. Is this because they survive as juveniles longer? The standard deviation gets larger as well. For the slow type, the mean is lower when S = 0.5 then when it is 0.4 or 0.6. It's worth noting that the means are the mean of means across all values of g and sigma. 
+
+```{r, echo=FALSE}
+new.data <- read.csv("May3b.csv", header=TRUE)
+names(new.data) <- c("X", "gbar","jsur","sigma","lam","eigen2","phi",
+            "r","R0","damp","time","ages","agef")
+
+# May 10 2016, S = 0.5 & 0.6 
+data.56 <- read.csv("May10.csv", header = TRUE)
+names(data.56) <- c("X", "gbar","jsur","sigma","lam","eigen2","phi",
+                    "r","R0","damp","time","ages","agef")
+
+d41 <- subset(new.data, gbar == 0.1, select = gbar:agef)
+d42 <- subset(new.data, gbar == 0.3, select = gbar:agef)
+d43 <- subset(new.data, gbar == 0.5, select = gbar:agef)
+d44 <- subset(new.data, gbar == 0.7, select = gbar:agef)
+d45 <- subset(new.data, gbar == 0.9, select = gbar:agef)
+
+
+d51 <- subset(data.56, gbar == 0.1 & jsur == 0.5, select = gbar:agef)
+d52 <- subset(data.56, gbar == 0.3 & jsur == 0.5, select = gbar:agef)
+d53 <- subset(data.56, gbar == 0.5 & jsur == 0.5, select = gbar:agef)
+d54 <- subset(data.56, gbar == 0.7 & jsur == 0.5, select = gbar:agef)
+d55 <- subset(data.56, gbar == 0.9 & jsur == 0.5, select = gbar:agef)
+
+#d5all <- rbind(d51,d52,d53,d54,d55)
+
+d61 <- subset(data.56, gbar == 0.1 & jsur == 0.6, select = gbar:agef)
+d62 <- subset(data.56, gbar == 0.3 & jsur == 0.6, select = gbar:agef)
+d63 <- subset(data.56, gbar == 0.5 & jsur == 0.6, select = gbar:agef)
+d64 <- subset(data.56, gbar == 0.7 & jsur == 0.6, select = gbar:agef)
+d65 <- subset(data.56, gbar == 0.9 & jsur == 0.6, select = gbar:agef)
+
+#d6all <- rbind(d61,d62,d63,d64,d65)
+
+dall <- rbind(d41,d42,d43,d44,d45,d51,d52,d53,d54,d55,d61,d62,d63,d64,d65)
+
+#S = 0.5
+px <- ggplot(dall, aes(x=sigma, y=ages, color="slow")) + geom_line()
+px + facet_grid(jsur~gbar, labeller = label_both) +
+  geom_line(data=dall, aes(x=sigma, y=agef,color="fast")) +
+  labs(x=expression(sigma), y="Mean Age at 1st Reproduction")
+
+```
+
+In general, stage 1 survival probability S doesn't change the basic pattern across g and sigma, just the range of values for the mean age of first reproduction. I'm sure there is a better way to graph this because these look like pacmans. The color is only there as a guide, we can change it. 
+
+Anyway, the main pattern is that increasing sigma increases the mean age at first reproduction for slow types and there is the opposite pattern for fast types. Also, increasing S increases the range of ages and increases the pooled mean for the fast type (the mean of means). I think this could be because their survival probability is so high that they could survive for many time steps than if S was lower. However, for the slow types, the pooled mean is 1.32 when S = 0.5 but 1.45 and 1.44 for S = 0.4 and 0.5, respectively. 

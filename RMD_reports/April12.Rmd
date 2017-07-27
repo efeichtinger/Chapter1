@@ -1,0 +1,240 @@
+---
+title: "Week of April 12"
+author: "Erin Feichtinger"
+date: "April 12, 2016"
+output: html_document
+---
+
+It has been a few weeks since I have generated a report but mostly I've been working on the graphics for the growth rate het manuscript. The past two weeks have also been busy in terms of grading and my project for the R course. The semester is nearing an end and I am behind on grading. I have to finish grading the current assignments by the end of next week.  
+
+## Summary for past few weeks 
+
+Bruce provided feedback on the growth het manuscript. I have gone through his comments and suggestions. I am editing the manuscript incorporating the suggested changes. Gordon and I have also discussed a few of the comments from Bruce, mostly focusing on the results and in particular, the figures and tables. We talked about standardizing all parameter values and clearing up some language in the text so the ideas are clear. Other things that we discussed were plotting R0 and T vary as a function of g in a monotypic population and log transforming R0 in the tables for the results of the monotypic population. We want to make it clear that phi = 1 is not really the true focus (beacuse it could be a red herring) by changing the way the results are presented. 
+
+### Figures made with ggplot2
+
+Gordon gave me some code for facet_grid in ggplot2. I was successful in constructing figures that show the relationship of pop growth rate, R0 and T as a function of sigma over 4 values of phi and 5 values of g. I also wrote a function to add greek symbols to the facet labels. We had talked about changing gbar to gamma so that's what the current label is but I could probably write code to generate gbar (with the bar overhead) using my labeller function. The text size and other aesetics may need to be adjusted but that's easy with ggplot2. 
+
+```{r, echo=FALSE}
+library(ggplot2)
+library(popbio)
+
+eig.2 <- read.csv("eigen2.csv", head=TRUE)
+eig.3 <- read.csv("eigen.csv", head=TRUE)
+eig.4 <- read.csv("eigenapril.csv", head=TRUE)
+eig.5 <- read.csv("eigen9.csv", head=TRUE)
+
+eig.all <- rbind(eig.4,eig.2,eig.3,eig.5)
+eig.all["r"] <-log(eig.all$lam)
+names(eig.all)[names(eig.all)=='gbar'] <- 'gamma'
+datA <- subset(eig.all, phi=="1" & jsur == "0.7" & gamma == "0.5")
+datB <- subset(eig.all, phi=="0" & jsur == "0.7" & gamma == "0.5")
+datAB <- rbind(datA, datB)
+datC <- subset(eig.all, phi==0.9 & gamma == 0.1 & jsur == 0.5)
+datD <- subset(eig.all, phi==0.9 & gamma == 0.3 & jsur == 0.5)
+datE <- subset(eig.all, phi==0.9 & gamma == 0.5 & jsur == 0.5)
+datF <- subset(eig.all, phi==0.9 & gamma == 0.7 & jsur == 0.5)
+datG <- subset(eig.all, phi==0.9 & gamma == 0.9 & jsur == 0.5)
+
+datH <- subset(eig.all, phi==0& gamma == 0.1 & jsur == 0.5)
+datI <- subset(eig.all, phi==0 & gamma == 0.3 & jsur == 0.5)
+datJ <- subset(eig.all, phi==0 & gamma == 0.5 & jsur == 0.5)
+datK <- subset(eig.all, phi==0 & gamma == 0.7 & jsur == 0.5)
+datL <- subset(eig.all, phi==0 & gamma == 0.9 & jsur == 0.5)
+
+datM <- subset(eig.all, phi == 0.5 & gamma==0.1 & jsur==0.5)
+datN <- subset(eig.all, phi == 0.5 & gamma==0.3 & jsur==0.5)
+datO <- subset(eig.all, phi ==0.5 & gamma==0.5 & jsur==0.5)
+datP <- subset(eig.all, phi == 0.5 & gamma==0.7 & jsur==0.5)
+datQ <- subset(eig.all, phi ==0.5 & gamma==0.9 & jsur==0.5)
+
+datR <- subset(eig.all, phi == -0.3 & gamma==0.1 & jsur==0.5)
+datS <- subset(eig.all, phi == -0.3 & gamma==0.3 & jsur==0.5)
+datT <- subset(eig.all, phi == -0.3 & gamma==0.5 & jsur==0.5)
+datU <- subset(eig.all, phi == -0.3 & gamma==0.7 & jsur==0.5)
+datV <- subset(eig.all, phi == -0.3 & gamma==0.9 & jsur==0.5)
+
+dat.pan <- rbind(datC,datD,datE,datF,datG,datH,datI,datJ,datK,datL)
+dat.pan2 <- rbind(datM,datN,datO,datP,datQ,datR,datS,datT,datU,datV)
+dat.pan3 <- rbind(datE,datJ,datO,datT)
+dat.all <- rbind(dat.pan,dat.pan2)
+
+```
+
+## Figures 
+
+### Figure 2 in the manuscript - lambda OR r as a function of sigma 
+
+```{r}
+#Label function 
+my.label <- function (expr1 = gamma == .(x), expr2 = phi == .(x)) 
+{
+  quoted1<- substitute(expr1)
+  quoted2 <- substitute(expr2)
+  function(variable, value) {
+    value <- as.character(value)
+    if(variable == 'gamma')
+      lapply(value, function(x)
+        eval(substitute(bquote(expr1, list(x = x)),list(expr1 = quoted1))))
+    else
+      lapply(value, function(x) 
+        eval(substitute(bquote(expr2, list(x = x)),list(expr2 = quoted2))))
+  }
+}
+
+#Lambda as a function of sigma
+p3 <- ggplot(dat.all, aes(sigma, lam)) + geom_line()
+p3 + facet_grid(gamma~ phi, labeller=my.label()) + 
+labs(x=expression(sigma), y=expression(lambda)) +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+#r as a function of sigma
+p3b <- ggplot(dat.all, aes(sigma, r)) + geom_line()
+p3b + facet_grid(gamma~ phi, labeller=my.label()) + 
+  labs(x=expression(sigma), y="r") +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) + 
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+```
+
+
+### Figure 3 - R0 as a function of sigma
+
+
+```{r}
+p4 <- ggplot(dat.all, aes(sigma, R0)) + geom_line()
+p4 + facet_grid(gamma ~ phi,labeller=my.label()) +
+labs(x=expression(sigma), y=expression('R'[0])) +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) +
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+```
+
+### Figure 4 - T as a function of sigma 
+
+
+```{r}
+p5 <- ggplot(dat.all, aes(sigma, time)) + geom_line()
+p5 + facet_grid(gamma ~ phi,labeller=my.label()) +
+  labs(x=expression(sigma),y=expression('T'[1])) +
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) +
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+
+```
+
+### Figure 5 - Damping ratio as a function of sigma 
+
+
+```{r}
+p6 <- ggplot(dat.all, aes(sigma, DampR)) + geom_line()
+p6 + facet_grid(gamma ~ phi,labeller=my.label()) +
+  labs(x=expression(sigma), y="Damping Ratio") +
+  #changes text size in panels 
+  theme(strip.text.x = element_text(size = 13)) +
+  theme(strip.text.y = element_text(size = 13)) +
+  theme(axis.text.x = element_text(size = 11, angle = 45)) +
+  theme(axis.text.y = element_text(size = 11)) +
+  theme(axis.title.x = element_text(size = 15, face = 'bold')) +
+  theme(axis.title.y = element_text(size = 15, face = 'bold'))
+```
+
+
+
+### Monotypic populations 
+
+As I understand it, we can look at two monotypic populations, slow growers and fast growers. This is the same as when phi = 1. I chose parameter values that were the same between both, with the exception of the maturation probability (1 - g) which is 1- (g + sigma) for the fast growers and 1- (g - sigma) for the slow growers. As of now, the parameter values are S = 0.5, g = 0.5, sigma = 0.05, and P = 0.7. Hold that thought on why I chose the values of S and g that I did, I will explain shortly. 
+
+```{r, echo=FALSE}
+sl <- c(0.275,1,0.225,0.7)
+slow <- matrix(sl, nrow=2, ncol =2, byrow =TRUE)
+fa <- c(0.225, 1, 0.275, 0.7)
+fast <- matrix(fa, nrow=2, ncol=2, byrow=TRUE)
+colnames(slow) <- c("Slow juvenile", "Slow adult")
+colnames(fast) <- c("Fast juvenile", "Fast adult")
+rownames(slow) <- c("Slow juvenile", "Slow adult")
+rownames(fast) <- c("Fast juvenile", "Fast adult")
+
+#Slow growers 
+slow
+#Fast growers 
+fast
+```
+
+
+#### Stage distribution and convergence to stable stage distribution 
+
+```{r, echo=FALSE}
+#Caswell's Fundamental Matrix - expected time spent in each stage 
+tf <- splitA(slow, r = 1, c=2)
+Tmat1 <- tf$T
+f1 <- fundamental.matrix(Tmat1)
+
+tf2 <- splitA(fast, r =1, c=2)
+Tmat2 <- tf2$T
+f2 <- fundamental.matrix(Tmat2)
+
+# Proportions of each stage 
+
+#Fast
+matplot2(pop.projection(fast, c(1,1), 100)$stage.vectors, col = 10:11,
+         lwd = 3, proportions = TRUE, legend= "right")
+
+#Slow
+matplot2(pop.projection(slow, c(1,1), 100)$stage.vectors, col= 10:11, 
+         lwd = 3, proportions = TRUE, legend= "right")
+
+# Total numbers 
+matplot2(pop.projection(fast, c(1,1), 100)$stage.vectors, col = 10:11,
+         lwd = 3, proportions = FALSE, legend= "topleft")
+
+matplot2(pop.projection(slow, c(1,1), 100)$stage.vectors, col= 10:11, 
+         lwd = 3, proportions = FALSE, legend= "topleft")
+
+
+```
+
+
+### Standardizing the parameter values 
+
+For figures 2 - 5, I plotted pop growth rate, R0 and T as a function of sigma, phi and g. I used 4 different values of phi (-0.3, 0, 0.5, 0.9) and 5 different values of g (0.1, 0.3, 0.5, 0.7, 0.9). I chose those 5 particular values of g to get a representation of the range of values (0.1 - 0.99). Do we find these particular values satisfactory? I think 5 is sufficient; any more and the figure could become unreadable. We could also include more figures in an appendix if we deem that necessary. I had the same line of thinking with phi. I used 0.9 instead of 1, which I think is a better choice given our previous discussions about the scenario where phi = 1. 
+
+So, with those values chosen for the figures 2 - 5, I needed to choose a value of g and juvenile survival. The juvenile survival probability (S) is set to 0.5 in figures 2 - 5. I chose this because it's the mid value. I constructed some figures of g as a function of sigma at a fixed phi over all values of S in the simulation (0.1 to 0.9 in 0.1 increments). The pattern is the same for each value of S.  
+
+As for g, I also chose 0.5 because it's the middle and the resulting dynamics is an increasing population. I can change these values at any time; I'm just not sure which ones to pick because there are 5 values of g shown in figures 2 -5 and the qualitative pattern in the same across S. 
+
+
+## Plans for the upcoming week
+1. First priority - manuscript
+ + Finish editing the text 
+ + Finish figures 
+ + Is it too ambitious to have the goal of submitting by the time Gordon leaves for Argentina?
+
+2. Grading, grading, grading. It's that time in the semester when all the grading I've put off to work on other things has to get done. 
+
+3. Work on R course project - the final version for the course is due at the end of the month when the semester ends 
+
+4. Frailty models for the jays 
+
+
+## Some other things to consider in the coming weeks
+1. Setting up all of the predictor data for the jay models so everything is ready to go. This includes group size, fire data, and acorns. I'll need some help on this and it would be prudent to do this before Gordon leaves in May. That way, I can just keep plugging away at the survival analyses. 
+2. Thinking about reproductive success and aster models because I would like to start this during the summer. 
+
+
